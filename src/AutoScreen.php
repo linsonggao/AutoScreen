@@ -9,6 +9,7 @@ class AutoScreen
 	protected $query;
 	protected $page;
 	protected $per_page;
+	protected $select;
 	public function getQuery($query)
 	{
 		$this->query = $query;
@@ -24,6 +25,7 @@ class AutoScreen
 	{
 		$table = ($this->query)->getTable();
 		$q = ($this->query)->query();
+		$q->select($this->select);
 		$default = config('automake.default');
 		$configSearchKeys = config('automake.search_key');
 		$columnList = Schema::getColumnListing($table);
@@ -64,8 +66,9 @@ class AutoScreen
 	/**
 	 * 填写过滤条件
 	 */
-	public function makeAutoPageList($screen = [])
+	public function makeAutoPageList($screen = [], $select = ["*"])
 	{
+		$this->select = $select;
 		$q = $this->makeAutoQuery();
 		if ($screen) {
 			foreach ($screen as $key => $value) {
