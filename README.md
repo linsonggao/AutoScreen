@@ -7,6 +7,8 @@ Lsg\AutoScreen\AutoScreenServiceProvider::class
 php代码
 
 use \Lsg\AutoScreen\AutoMake;
+use App\Models\Admin;
+
 $query = new Admin();
 $res = AutoMake::getQuery($query)->makeAutoQuery();
 dd($res->get()->toArray());
