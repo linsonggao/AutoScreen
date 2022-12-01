@@ -1,4 +1,7 @@
 # AutoScreen
+
+require lsg/auto-screen:1.2
+php artisan vendor:publish --provider="Lsg\AutoScreen\AutoScreenServiceProvider"
 使用方法
 config/app.php
 增加 
