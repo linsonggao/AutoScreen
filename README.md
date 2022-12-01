@@ -18,4 +18,8 @@ $query = new Admin();
 $res = AutoMake::getQuery($query)->doAutoUpdate();
 dd($res);
 
+
+$query = new Admin();
+$res = AutoMake::getQuery($query)->makeAutoPageList();
+dd($res);
 实现了根据提交参数自动查询与更新

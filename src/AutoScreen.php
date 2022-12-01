@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Schema;
 class AutoScreen
 {
 	protected $query;
+	protected $page;
+	protected $per_page;
 	public function getQuery($query)
 	{
 		$this->query = $query;
@@ -58,6 +60,15 @@ class AutoScreen
 			}
 		}
 		return $q;
+	}
+	public function makeAutoPageList($page = 1, $per_page = 15)
+	{
+		$q = $this->makeAutoQuery();
+		$q->orderBy('id', 'desc');
+		$page =  request()->input('page', 1);
+		$per_page = request()->input('per_page', 15);
+		$list = $q->paginate($per_page, ['*'], 'page', $page)->toArray();
+		return $list;
 	}
 	/**
 	 * 自动更新表字段
