@@ -61,9 +61,17 @@ class AutoScreen
 		}
 		return $q;
 	}
-	public function makeAutoPageList($page = 1, $per_page = 15)
+	/**
+	 * 填写过滤条件
+	 */
+	public function makeAutoPageList($screen = [])
 	{
 		$q = $this->makeAutoQuery();
+		if ($screen) {
+			foreach ($screen as $key => $value) {
+				$q->where($key, $value);
+			}
+		}
 		$q->orderBy('id', 'desc');
 		$page =  request()->input('page', 1);
 		$per_page = request()->input('per_page', 15);
