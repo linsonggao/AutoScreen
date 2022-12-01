@@ -1,0 +1,19 @@
+{
+    "name": "lsg/auto-screen",
+    "description": "筛选",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "linsonggao",
+            "email": "371925293@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Lsg\\AutoScreen\\": "src/"
+        }
+    }
+}
