@@ -10,6 +10,8 @@ class AutoScreen
 	protected $page;
 	protected $per_page;
 	protected $select;
+	protected $table;
+	protected $columnList;
 	public function getQuery($query)
 	{
 		$this->query = $query;
@@ -23,12 +25,12 @@ class AutoScreen
 	 */
 	public function makeAutoQuery()
 	{
-		$table = ($this->query)->getTable();
+		$this->table = $table = ($this->query)->getTable();
 		$q = ($this->query)->query();
 		$q->select($this->select);
 		$default = config('automake.default');
 		$configSearchKeys = config('automake.search_key');
-		$columnList = Schema::getColumnListing($table);
+		$this->columnList = $columnList = Schema::getColumnListing($table);
 		$searchArr = request()->all();
 		foreach ($searchArr as  $searchKey => $searchValue) {
 			//默认值
@@ -51,6 +53,7 @@ class AutoScreen
 					}
 				);
 			}
+			//时间与字符串like
 			if ($searchValue && in_array($searchKey, $columnList) && $searchValue != $default && !in_array($searchKey, $configSearchKeys)) {
 				$type = Schema::getColumnType($table, $searchKey);
 				//时间筛选,时间格式并且是数组
@@ -78,7 +81,22 @@ class AutoScreen
 		$q->orderBy('id', 'desc');
 		$page =  request()->input('page', 1);
 		$per_page = request()->input('per_page', 15);
+
 		$list = $q->paginate($per_page, ['*'], 'page', $page)->toArray();
+
+		//枚举值类型转换
+		$enm_str = 'automake.' . $this->table . '_enums_arr';
+		$enm_arr = config($enm_str) ?? '';
+		if ($enm_arr && is_array($enm_arr)) {
+			foreach ($list['data'] as &$list_value) {
+				foreach ($enm_arr as $k => $value) {
+					# code...
+					if (isset($list_value[$k])) {
+						$list_value[$k . '_str'] = $value[$list_value[$k]];
+					}
+				}
+			}
+		}
 		return $list;
 	}
 	/**
