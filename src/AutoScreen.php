@@ -57,7 +57,7 @@ class AutoScreen
 			if ($searchValue && in_array($searchKey, $columnList) && $searchValue != $default && !in_array($searchKey, $configSearchKeys)) {
 				$type = Schema::getColumnType($table, $searchKey);
 				//时间筛选,时间格式并且是数组
-				if (is_array($searchValue) && $type == 'datetime') {
+				if (is_array($searchValue) && ($type == 'datetime' || $type == 'date')) {
 					$q->where($searchKey, '>=', $searchValue[0] . " 00:00:00")->where($searchKey, '<=', $searchValue[0] . " 23:59:59");
 				} else if ($type == 'string' && !in_array($searchKey, config('automake.string_equal'))) { //如果是字符串并且默认为like
 					$q->where($searchKey, 'like', '%' . $searchValue . '%');
