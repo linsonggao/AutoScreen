@@ -12,6 +12,7 @@ class AutoScreen
 	protected $select;
 	protected $table;
 	protected $columnList;
+	protected $requestData;
 	public function getQuery($query)
 	{
 		$this->query = $query;
@@ -104,20 +105,42 @@ class AutoScreen
 	 * $query = new Admin();
 	 * $res = AutoMake::getQuery($query)->doAutoUpdate();
 	 */
-	public function doAutoUpdate()
+	public function doAutoUpdate($onlyUpdate = ['*'], $except = false)
 	{
-		$updateArr = request()->all();
+		$only = false;
+		if (count($onlyUpdate) == 1 && $onlyUpdate[0] == '*') {
+			$updateArr = request()->all();
+		} else {
+			$only = true;
+		}
 		if (!isset($updateArr['id'])) {
 			return false;
+		}
+		//如果设置了需要排除的字段
+		$exceptArr = [];
+		if (is_array($except)) {
+			$exceptArr = $except;
 		}
 		$table = ($this->query)->getTable();
 		$q = ($this->query)->query();
 		$columnList = Schema::getColumnListing($table);
 		foreach ($updateArr as  $updateKey => $updateValue) {
+			if (in_array($updateKey, $exceptArr)) {
+				continue;
+			}
 			if (in_array($updateKey, $columnList)) {
-				$q->where('id', $updateArr['id'])->update([
-					$updateKey => $updateValue
-				]);
+				//如果设置了只更新字段
+				if ($only) {
+					if (in_array($updateKey, $onlyUpdate)) {
+						$q->where('id', $updateArr['id'])->update([
+							$updateKey => $updateValue
+						]);
+					}
+				} else {
+					$q->where('id', $updateArr['id'])->update([
+						$updateKey => $updateValue
+					]);
+				}
 			}
 		}
 		return true;
