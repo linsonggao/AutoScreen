@@ -101,7 +101,7 @@ class AutoScreen
 				foreach ($enm_arr as $k => $value) {
 					# code...
 					if (isset($list_value[$k])) {
-						$list_value[$k . '_str'] = $value[$list_value[$k]];
+						$list_value[$k . '_str'] = $value[$list_value[$k]] ?? $k . '未定义的类型' . $list_value[$k];
 					}
 				}
 			}
