@@ -13,6 +13,7 @@ class AutoScreen
 	protected $table;
 	protected $columnList;
 	protected $requestData;
+	protected $loseWhere;
 	public function getQuery($query)
 	{
 		$this->query = $query;
@@ -34,6 +35,12 @@ class AutoScreen
 		$this->columnList = $columnList = Schema::getColumnListing($table);
 		$searchArr = request()->all();
 		foreach ($searchArr as  $searchKey => $searchValue) {
+			//不进行筛选的数组
+			if ($this->loseWhere) {
+				if (in_array($searchKey, $this->loseWhere)) {
+					continue;
+				}
+			}
 			//默认值
 			$searchValue = request()->input($searchKey, $default);
 			//多条件筛选
@@ -70,9 +77,10 @@ class AutoScreen
 	/**
 	 * 填写过滤条件
 	 */
-	public function makeAutoPageList($screen = [], $select = ["*"])
+	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [])
 	{
 		$this->select = $select;
+		$this->loseWhere = $loseWhere;
 		$q = $this->makeAutoQuery();
 		if ($screen) {
 			foreach ($screen as $key => $value) {
