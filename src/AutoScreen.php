@@ -116,8 +116,8 @@ class AutoScreen
 	public function doAutoUpdate($onlyUpdate = ['*'], $except = false)
 	{
 		$only = false;
+		$updateArr = request()->all();
 		if (count($onlyUpdate) == 1 && $onlyUpdate[0] == '*') {
-			$updateArr = request()->all();
 		} else {
 			$only = true;
 		}
