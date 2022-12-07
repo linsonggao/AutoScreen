@@ -69,6 +69,8 @@ class AutoScreen
 					$q->where($searchKey, '>=', $searchValue[0] . " 00:00:00")->where($searchKey, '<=', $searchValue[0] . " 23:59:59");
 				} else if ($type == 'string' && !in_array($searchKey, config('automake.string_equal'))) { //如果是字符串并且默认为like
 					$q->where($searchKey, 'like', '%' . $searchValue . '%');
+				} else if (($type == 'boolean' || $type == 'integer') && is_numeric($searchValue)) {
+					$q->where($searchKey, $searchValue);
 				}
 			}
 		}
@@ -101,7 +103,7 @@ class AutoScreen
 				foreach ($enm_arr as $k => $value) {
 					# code...
 					if (isset($list_value[$k])) {
-						$list_value[$k . '_str'] = $value[$list_value[$k]] ?? $k . '未定义的类型' . $list_value[$k];
+						$list_value[$k . '_str'] = $value[$list_value[$k]];
 					}
 				}
 			}
