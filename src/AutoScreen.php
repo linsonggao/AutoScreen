@@ -43,6 +43,7 @@ class AutoScreen
 			}
 			//默认值
 			$searchValue = request()->input($searchKey, $default);
+
 			//多条件筛选
 			if (in_array($searchKey, $configSearchKeys)) {
 				$q->where(
@@ -62,7 +63,7 @@ class AutoScreen
 				);
 			}
 			//时间与字符串like
-			if ($searchValue && in_array($searchKey, $columnList) && $searchValue != $default && !in_array($searchKey, $configSearchKeys)) {
+			if (($searchValue || $searchValue == 0) && in_array($searchKey, $columnList) && $searchValue != $default && !in_array($searchKey, $configSearchKeys)) {
 				$type = Schema::getColumnType($table, $searchKey);
 				//时间筛选,时间格式并且是数组
 				if (is_array($searchValue) && ($type == 'datetime' || $type == 'date')) {
