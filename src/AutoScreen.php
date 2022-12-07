@@ -79,6 +79,9 @@ class AutoScreen
 	}
 	/**
 	 * 填写过滤条件
+	 * @param array $screen 传过滤字段
+	 * @param mixed $select 传只筛查字段
+	 * @param array $loseWhere 传不筛查的字段数组
 	 */
 	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [])
 	{
@@ -115,6 +118,9 @@ class AutoScreen
 	 * 自动更新表字段
 	 * $query = new Admin();
 	 * $res = AutoMake::getQuery($query)->doAutoUpdate();
+	 * @param array $onlyUpdate 传只更新字段
+	 * @param mixed $except 传不更新的字段
+	 * @return bool true/false
 	 */
 	public function doAutoUpdate($onlyUpdate = ['*'], $except = false)
 	{
