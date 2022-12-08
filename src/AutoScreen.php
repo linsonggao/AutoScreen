@@ -73,6 +73,8 @@ class AutoScreen
 					$q->where($searchKey, 'like', '%' . $searchValue . '%');
 				} else if (($type == 'boolean' || $type == 'integer') && is_numeric($searchValue)) {
 					$q->where($searchKey, $searchValue);
+				} else if (is_array($searchValue)) {
+					$q->whereIn('result_score', $searchValue);
 				}
 			}
 		}
