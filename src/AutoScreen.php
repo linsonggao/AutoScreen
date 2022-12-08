@@ -27,6 +27,7 @@ class AutoScreen
 	 */
 	public function makeAutoQuery()
 	{
+
 		$this->table = $table = ($this->query)->getTable();
 		$q = ($this->query)->query();
 		$q->select($this->select);
