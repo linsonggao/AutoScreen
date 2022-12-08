@@ -69,12 +69,14 @@ class AutoScreen
 				if (is_array($searchValue) && ($type == 'datetime' || $type == 'date')) {
 					$q->where($searchKey, '>=', $searchValue[0] . " 00:00:00")->where($searchKey, '<=', $searchValue[0] . " 23:59:59");
 				} else if ($type == 'string' && !in_array($searchKey, config('automake.string_equal'))) { //如果是字符串并且默认为like
+					$searchValue = str_replace('%', "\%", $searchValue);
 					$q->where($searchKey, 'like', '%' . $searchValue . '%');
 				} else if (($type == 'boolean' || $type == 'integer') && is_numeric($searchValue)) {
 					$q->where($searchKey, $searchValue);
 				}
 			}
 		}
+		//$q->where('test', 'test');
 		return $q;
 	}
 	/**
@@ -101,6 +103,7 @@ class AutoScreen
 
 		//枚举值类型转换
 		$enm_str = 'automake.' . $this->table . '_enums_arr';
+
 		$enm_arr = config($enm_str) ?? '';
 		if ($enm_arr && is_array($enm_arr)) {
 			foreach ($list['data'] as &$list_value) {
