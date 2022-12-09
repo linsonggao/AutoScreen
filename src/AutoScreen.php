@@ -71,10 +71,25 @@ class AutoScreen
 				} else if ($type == 'string' && !in_array($searchKey, config('automake.string_equal'))) { //如果是字符串并且默认为like
 					$searchValue = str_replace('%', "\%", $searchValue);
 					$q->where($searchKey, 'like', '%' . $searchValue . '%');
-				} else if (($type == 'boolean' || $type == 'integer') && is_numeric($searchValue)) {
+				} else if (($type == 'boolean' || $type == 'integer') && is_numeric($searchValue)) { //如果是int值则直接等于
 					$q->where($searchKey, $searchValue);
-				} else if (is_array($searchValue)) {
-					$q->whereIn($searchKey, $searchValue);
+				} else if (is_array($searchValue)) { //如果是数组的话需要分情况
+					//枚举值类型转换
+					$between_str = 'automake.' . $this->table . '_between_arr';
+					$between_arr = config($between_str) ?? '';
+					$gt_str = 'automake.' . $this->table . '_gt_arr';
+					$gt_arr = config($gt_str) ?? '';
+					$lt_str = 'automake.' . $this->table . '_lt_arr';
+					$lt_arr = config($lt_str) ?? '';
+					if ($between_arr && count($between_arr) >= 2) {
+						$q->where($searchKey, '>=', $searchValue[0])->where($searchKey, '<=', $searchValue[1]);
+					} else if ($gt_arr && count($gt_arr) >= 1) {
+						$q->where($searchKey, '>=', $searchValue);
+					} else if ($lt_arr && count($gt_arr) >= 1) {
+						$q->where($searchKey, '<=', $searchValue);
+					} else {
+						$q->whereIn($searchKey, $searchValue);
+					}
 				}
 			}
 		}
