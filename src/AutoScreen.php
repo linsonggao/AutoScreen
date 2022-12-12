@@ -43,7 +43,6 @@ class AutoScreen
 			}
 			//默认值
 			$searchValue = request()->input($searchKey, $default);
-
 			//多条件筛选
 			if (in_array($searchKey, $configSearchKeys)) {
 				$q->where(
