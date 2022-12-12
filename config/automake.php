@@ -37,5 +37,5 @@ return [
   //需要判断大于的值
   'intestine_patients_gt_arr' => [],
   //需要判断小于的值
-  'intestine_patients_gt_arr' => [],
+  'intestine_patients_lt_arr' => [],
 ];

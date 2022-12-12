@@ -81,7 +81,7 @@ class AutoScreen
 					$gt_arr = config($gt_str) ?? '';
 					$lt_str = 'automake.' . $this->table . '_lt_arr';
 					$lt_arr = config($lt_str) ?? '';
-					if ($between_arr && count($between_arr) >= 2) {
+					if ($between_arr && count($searchValue) >= 2) {
 						$q->where($searchKey, '>=', $searchValue[0])->where($searchKey, '<=', $searchValue[1]);
 					} else if ($gt_arr && count($gt_arr) >= 1) {
 						$q->where($searchKey, '>=', $searchValue);
@@ -89,6 +89,11 @@ class AutoScreen
 						$q->where($searchKey, '<=', $searchValue);
 					} else {
 						$q->whereIn($searchKey, $searchValue);
+					}
+				} else if ($type == 'integer' && is_string($searchValue)) {
+					$between_str = 'automake.' . $this->table . '_between_arr';
+					$between_arr = config($between_str) ?? '';
+					if ($between_arr && count($between_arr) >= 2) {
 					}
 				}
 			}
