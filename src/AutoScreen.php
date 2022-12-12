@@ -92,7 +92,11 @@ class AutoScreen
 				} else if ($type == 'integer' && is_string($searchValue)) {
 					$between_str = 'automake.' . $this->table . '_between_arr';
 					$between_arr = config($between_str) ?? '';
-					if ($between_arr && count($between_arr) >= 2) {
+					if (in_array($searchKey, $between_arr)) {
+						$arr = explode(',', $searchValue);
+						if ($arr) {
+							$q->where($searchKey, '>=', $arr[0])->where($searchKey, '<=', $arr[1]);
+						}
 					}
 				}
 			}
