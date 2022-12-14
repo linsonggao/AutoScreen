@@ -110,7 +110,7 @@ class AutoScreen
 	 * @param mixed $select 传只筛查字段
 	 * @param array $loseWhere 传不筛查的字段数组
 	 */
-	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [])
+	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = false)
 	{
 		$this->select = $select;
 		$this->loseWhere = $loseWhere;
@@ -123,15 +123,17 @@ class AutoScreen
 		$q->orderBy('id', 'desc');
 		$page =  request()->input('page', 1);
 		$per_page = request()->input('per_page', 15);
-
-		$list = $q->paginate($per_page, ['*'], 'page', $page)->toArray();
-
+		if ($pageCustom) {
+			$list = $q->customPaginate(true, $per_page, $page)->toArray();
+		} else {
+			$list = $q->paginate($per_page, ['*'], 'page', $page)->toArray();
+		}
 		//枚举值类型转换
 		$enm_str = 'automake.' . $this->table . '_enums_arr';
 
 		$enm_arr = config($enm_str) ?? '';
 		if ($enm_arr && is_array($enm_arr)) {
-			foreach ($list['data'] as &$list_value) {
+			foreach ($list['data'] ?? $list['list'] as &$list_value) {
 				foreach ($enm_arr as $k => $value) {
 					# code...
 					if (isset($list_value[$k])) {
