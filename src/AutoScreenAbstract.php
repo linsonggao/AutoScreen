@@ -12,6 +12,7 @@ abstract class  AutoScreenAbstract implements AutoScreenInterface
   protected $columnList;
   protected $requestData;
   protected $loseWhere;
+
   public function getQuery($query): object
   {
     $this->query = $query;
