@@ -1,7 +1,7 @@
 [English](README.md) | 简体中文
 
 # GUPO AUTOMAKE SDK for PHP
-
+实现了根据表结构与提交参数自动查询与更新
 ## 安装
 
 ### Composer
