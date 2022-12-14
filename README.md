@@ -12,6 +12,7 @@ composer require lsg/auto-screen
 
 
 ## 使用说明
+```bash
 php artisan vendor:publish --provider="Lsg\AutoScreen\AutoScreenServiceProvider"
 使用方法
 config/app.php
@@ -36,6 +37,7 @@ dd($res);
 $query = new Admin();
 $res = AutoMake::getQuery($query)->makeAutoPageList();
 dd($res);
+```
 ## 发行说明
 
 每个版本的详细更改记录在[发行说明](./ChangeLog.txt)中。
