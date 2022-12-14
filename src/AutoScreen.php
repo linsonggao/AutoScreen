@@ -4,21 +4,8 @@ namespace Lsg\AutoScreen;
 
 use Illuminate\Support\Facades\Schema;
 
-class AutoScreen implements AutoScreenInterface
+class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 {
-	protected $query;
-	protected $page;
-	protected $per_page;
-	protected $select;
-	protected $table;
-	protected $columnList;
-	protected $requestData;
-	protected $loseWhere;
-	public function getQuery($query): object
-	{
-		$this->query = $query;
-		return $this;
-	}
 	/**
 	 * 调用方法
 	 * $query = new Admin();
