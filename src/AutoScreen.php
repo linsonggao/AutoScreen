@@ -109,6 +109,7 @@ class AutoScreen
 	 * @param array $screen 传过滤字段
 	 * @param mixed $select 传只筛查字段
 	 * @param array $loseWhere 传不筛查的字段数组
+	 * @param bool $pageCustom 分页的问题
 	 */
 	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = false)
 	{
@@ -143,6 +144,10 @@ class AutoScreen
 			}
 		}
 		return $list;
+	}
+	public function makeCustomPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true)
+	{
+		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom);
 	}
 	/**
 	 * 自动更新表字段
