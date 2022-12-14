@@ -4,7 +4,7 @@ namespace Lsg\AutoScreen;
 
 use Illuminate\Support\Facades\Schema;
 
-class AutoScreen
+class AutoScreen implements AutoScreenInterface
 {
 	protected $query;
 	protected $page;
@@ -14,7 +14,7 @@ class AutoScreen
 	protected $columnList;
 	protected $requestData;
 	protected $loseWhere;
-	public function getQuery($query)
+	public function getQuery($query): object
 	{
 		$this->query = $query;
 		return $this;
@@ -25,7 +25,7 @@ class AutoScreen
 	 * $res = AutoMake::getQuery($query)->makeAutoQuery();
 	 * $res->get()->toArray();
 	 */
-	public function makeAutoQuery()
+	public function makeAutoQuery(): object
 	{
 		$this->table = $table = ($this->query)->getTable();
 		$q = ($this->query)->query();
@@ -111,7 +111,7 @@ class AutoScreen
 	 * @param array $loseWhere 传不筛查的字段数组
 	 * @param bool $pageCustom 分页的问题
 	 */
-	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = false)
+	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = false): array
 	{
 		$this->select = $select;
 		$this->loseWhere = $loseWhere;
@@ -145,7 +145,7 @@ class AutoScreen
 		}
 		return $list;
 	}
-	public function makeCustomPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true)
+	public function makeCustomPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true): array
 	{
 		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom);
 	}
@@ -157,7 +157,7 @@ class AutoScreen
 	 * @param mixed $except 传不更新的字段
 	 * @return bool true/false
 	 */
-	public function doAutoUpdate($onlyUpdate = ['*'], $except = false)
+	public function doAutoUpdate($onlyUpdate = ['*'], $except = false): bool
 	{
 		$only = false;
 		$updateArr = request()->all();
