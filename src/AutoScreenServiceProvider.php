@@ -30,7 +30,7 @@ class AutoScreenServiceProvider extends ServiceProvider
         //宏反向注册
         Builder::macro('autoList', function (...$item) {
             if ($item !== false) {
-                return  AutoMake::getQuery($this)->makeCustomPageList($item);
+                return  AutoMake::getQuery($this)->makeCustomPageList(...$item);
             } else {
                 return  AutoMake::getQuery($this);
             }
@@ -38,7 +38,7 @@ class AutoScreenServiceProvider extends ServiceProvider
         //宏反向注册
         Builder::macro('autoUpdate', function (...$item) {
             if ($item !== false) {
-                return  AutoMake::getQuery($this)->doAutoUpdate($item);
+                return  AutoMake::getQuery($this)->doAutoUpdate(...$item);
             } else {
                 return  AutoMake::getQuery($this);
             }
