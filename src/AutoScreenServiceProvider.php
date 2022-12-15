@@ -3,6 +3,7 @@
 namespace Lsg\AutoScreen;
 
 use Illuminate\Support\ServiceProvider;
+use \Illuminate\Database\Eloquent\Builder;
 
 class AutoScreenServiceProvider extends ServiceProvider
 {
@@ -17,6 +18,22 @@ class AutoScreenServiceProvider extends ServiceProvider
 
         $this->app->singleton('auto-screen', function () {
             return new  AutoScreen;
+        });
+        //宏反向注册
+        Builder::macro('autoMake', function ($item = false) {
+            if ($item !== false) {
+                return  AutoMake::getQuery($this)->makeAutoPageList($item);
+            } else {
+                return  AutoMake::getQuery($this);
+            }
+        });
+        //宏反向注册
+        Builder::macro('autoUpdate', function ($item = false) {
+            if ($item !== false) {
+                return  AutoMake::getQuery($this)->doAutoUpdate($item);
+            } else {
+                return  AutoMake::getQuery($this);
+            }
         });
     }
 

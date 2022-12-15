@@ -2,6 +2,7 @@
 
 namespace Lsg\AutoScreen;
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;
 
 class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
@@ -14,8 +15,14 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 	 */
 	public function makeAutoQuery(): object
 	{
-		$this->table = $table = ($this->query)->getTable();
-		$q = ($this->query)->query();
+		//dd($this->query->from);
+		if ($this->query instanceof Builder) {
+			$this->table = $table = $this->query->from;
+			$q = ($this->query);
+		} else {
+			$this->table = $table = ($this->query)->getTable();
+			$q = ($this->query)->query();
+		}
 		$q->select($this->select);
 		$default = config('automake.default');
 		$configSearchKeys = config('automake.search_key');
@@ -79,7 +86,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				} else if ($type == 'integer' && is_string($searchValue)) {
 					$between_str = 'automake.' . $this->table . '_between_arr';
 					$between_arr = config($between_str) ?? '';
-					if (in_array($searchKey, $between_arr)) {
+					if (is_array($between_arr) && in_array($searchKey, $between_arr)) {
 						$arr = explode(',', $searchValue);
 						if ($arr) {
 							$q->where($searchKey, '>=', $arr[0])->where($searchKey, '<=', $arr[1]);
