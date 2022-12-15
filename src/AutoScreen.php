@@ -167,8 +167,13 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		if (is_array($except)) {
 			$exceptArr = $except;
 		}
-		$table = ($this->query)->getTable();
-		$q = ($this->query)->query();
+		if ($this->query instanceof Builder) {
+			$this->table = $table = $this->query->from;
+			$q = ($this->query);
+		} else {
+			$this->table = $table = ($this->query)->getTable();
+			$q = ($this->query)->query();
+		}
 		$columnList = Schema::getColumnListing($table);
 		foreach ($updateArr as  $updateKey => $updateValue) {
 			if (in_array($updateKey, $exceptArr)) {
