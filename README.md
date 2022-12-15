@@ -39,9 +39,11 @@ $res = AutoMake::getQuery($query)->makeAutoPageList();
 dd($res);
 
 
-$res = Admin::autoMake($query);
+$res = Admin::autoMake(['name'=>'测试']);
 dd($res);
 
+$res = Admin::autoUpdate(['status']);
+dd($res);
 ```
 ## 发行说明
 
