@@ -37,6 +37,11 @@ dd($res);
 $query = new Admin();
 $res = AutoMake::getQuery($query)->makeAutoPageList();
 dd($res);
+
+
+$res = Admin::autoMake($query);
+dd($res);
+
 ```
 ## 发行说明
 
