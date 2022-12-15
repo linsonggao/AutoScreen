@@ -20,15 +20,15 @@ class AutoScreenServiceProvider extends ServiceProvider
             return new  AutoScreen;
         });
         //宏反向注册
-        Builder::macro('autoMake', function ($item = false) {
+        Builder::macro('autoMake', function (...$item) {
             if ($item !== false) {
-                return  AutoMake::getQuery($this)->makeAutoPageList($item);
+                return  AutoMake::getQuery($this)->makeAutoPageList(...$item);
             } else {
                 return  AutoMake::getQuery($this);
             }
         });
         //宏反向注册
-        Builder::macro('autoList', function ($item = false) {
+        Builder::macro('autoList', function (...$item) {
             if ($item !== false) {
                 return  AutoMake::getQuery($this)->makeCustomPageList($item);
             } else {
@@ -36,7 +36,7 @@ class AutoScreenServiceProvider extends ServiceProvider
             }
         });
         //宏反向注册
-        Builder::macro('autoUpdate', function ($item = false) {
+        Builder::macro('autoUpdate', function (...$item) {
             if ($item !== false) {
                 return  AutoMake::getQuery($this)->doAutoUpdate($item);
             } else {
