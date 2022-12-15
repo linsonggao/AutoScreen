@@ -28,6 +28,14 @@ class AutoScreenServiceProvider extends ServiceProvider
             }
         });
         //宏反向注册
+        Builder::macro('autoList', function ($item = false) {
+            if ($item !== false) {
+                return  AutoMake::getQuery($this)->makeCustomPageList($item);
+            } else {
+                return  AutoMake::getQuery($this);
+            }
+        });
+        //宏反向注册
         Builder::macro('autoUpdate', function ($item = false) {
             if ($item !== false) {
                 return  AutoMake::getQuery($this)->doAutoUpdate($item);
