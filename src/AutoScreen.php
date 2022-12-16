@@ -59,12 +59,12 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 			if (($searchValue || $searchValue == 0) && in_array($searchKey, $columnList) && $searchValue != $default && !in_array($searchKey, $configSearchKeys)) {
 				$type = Schema::getColumnType($table, $searchKey);
 				$between_str = 'automake.' . $this->table . '_between_arr';
-				$between_arr = config($between_str) ?? '';
+				$between_arr = config($between_str) ?? [];
 				//时间筛选,时间格式并且是数组
 				if (is_array($searchValue) && ($type == 'datetime' || $type == 'date')) {
 					$q->where($searchKey, '>=', $searchValue[0] . " 00:00:00")->where($searchKey, '<=', $searchValue[0] . " 23:59:59");
-				} else if (($type == 'string' || $type == 'text') && !in_array($searchKey, config('automake.string_equal')) &&
-					!in_array($searchKey, config($between_str))
+				} else if (($type == 'string' || $type == 'text') && !in_array($searchKey, config('automake.string_equal'))  &&
+					!in_array($searchKey, $between_arr)
 				) { //如果是字符串并且默认为like
 					$searchValue = str_replace('%', "\%", $searchValue);
 					$q->where($searchKey, 'like', '%' . $searchValue . '%');
