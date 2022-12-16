@@ -131,13 +131,17 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 			$forList = $list['data'] ?? $list['list'];
 			foreach (($forList) as &$list_value) {
 				foreach ($enm_arr as $k => $value) {
+					# code...
 					if (isset($list_value[$k])) {
 						$list_value[$k . '_str'] = $value[$list_value[$k]] ?? '未定义的枚举类型' . $k . ':' . $list_value[$k];
 					}
 				}
 			}
 		}
-		return $forList;
+		unset($list['data']);
+		unset($list['list']);
+		$list['data'] = $forList;
+		return $list;
 	}
 	public function makeCustomPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true): array
 	{
