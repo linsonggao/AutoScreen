@@ -129,9 +129,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		$enm_str = 'automake.' . $this->table . '_enums_arr';
 		$enm_arr = config($enm_str) ?? '';
 		$forList = [];
-		if ($enm_arr && is_array($enm_arr)) {
-			$forList = $list['data'] ?? $list['list'];
-			foreach (($forList) as &$list_value) {
+		$forList = $list['data'] ?? $list['list'];
+		foreach (($forList) as &$list_value) {
+			if ($enm_arr && is_array($enm_arr)) {
 				foreach ($enm_arr as $k => $value) {
 					# code...
 					if (isset($list_value[$k])) {
