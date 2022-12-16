@@ -58,18 +58,20 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 			//时间与字符串like
 			if (($searchValue || $searchValue == 0) && in_array($searchKey, $columnList) && $searchValue != $default && !in_array($searchKey, $configSearchKeys)) {
 				$type = Schema::getColumnType($table, $searchKey);
+				$between_str = 'automake.' . $this->table . '_between_arr';
+				$between_arr = config($between_str) ?? '';
 				//时间筛选,时间格式并且是数组
 				if (is_array($searchValue) && ($type == 'datetime' || $type == 'date')) {
 					$q->where($searchKey, '>=', $searchValue[0] . " 00:00:00")->where($searchKey, '<=', $searchValue[0] . " 23:59:59");
-				} else if (($type == 'string' || $type == 'text') && !in_array($searchKey, config('automake.string_equal'))) { //如果是字符串并且默认为like
+				} else if (($type == 'string' || $type == 'text') && !in_array($searchKey, config('automake.string_equal')) &&
+					!in_array($searchKey, config($between_str))
+				) { //如果是字符串并且默认为like
 					$searchValue = str_replace('%', "\%", $searchValue);
 					$q->where($searchKey, 'like', '%' . $searchValue . '%');
 				} else if (($type == 'boolean' || $type == 'integer') && is_numeric($searchValue)) { //如果是int值则直接等于
 					$q->where($searchKey, $searchValue);
 				} else if (is_array($searchValue)) { //如果是数组的话需要分情况
 					//枚举值类型转换
-					$between_str = 'automake.' . $this->table . '_between_arr';
-					$between_arr = config($between_str) ?? '';
 					$gt_str = 'automake.' . $this->table . '_gt_arr';
 					$gt_arr = config($gt_str) ?? '';
 					$lt_str = 'automake.' . $this->table . '_lt_arr';
