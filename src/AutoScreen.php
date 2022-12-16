@@ -128,7 +128,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		//枚举值类型转换
 		$enm_str = 'automake.' . $this->table . '_enums_arr';
 		$enm_arr = config($enm_str) ?? '';
-
+		$forList = [];
 		if ($enm_arr && is_array($enm_arr)) {
 			$forList = $list['data'] ?? $list['list'];
 			foreach (($forList) as &$list_value) {
