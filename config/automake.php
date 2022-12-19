@@ -33,9 +33,17 @@ return [
     'gender' => [0 => '保密', 1 => '男', 2 => '女']
   ],
   //某表需要判断between的值
-  'intestine_patients_between_arr' => ['year_bth'],
+  'intestine_patients_between_arr' => ['year_bth', 'operate_at'],
+  //某表需要判断between的值
+  'questionnaires_logs_between_arr' => ['year_bth'],
+  //某表需要判断between的值
+  'intestine_patients_diag_logs_between_arr' => ['year_bth'],
+  //某表需要判断between的值
+  'intestine_patients_cure_logs_between_arr' => ['year_bth'],
   //需要判断大于的值
   'intestine_patients_gt_arr' => [],
   //需要判断小于的值
   'intestine_patients_lt_arr' => [],
+  //二位数组需要多重判断，表名_in_multi
+  'yuhuan_spcl_dses_clrtl_cncr_list_in_multi' => ['age'], //需要提交参数为 age[0][0],age[0][1]
 ];

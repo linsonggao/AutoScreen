@@ -17,7 +17,12 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 	{
 		//dd($this->query->from);
 		if ($this->query instanceof Builder) {
-			$this->table = $table = $this->query->from;
+			$tbArr = explode('.', $this->query->from);
+			if (count($tbArr) == 2) {
+				$this->table = $table = $tbArr[1];
+			} else {
+				$this->table = $table = $this->query->from;
+			}
 			$q = ($this->query);
 		} else {
 			$this->table = $table = ($this->query)->getTable();
@@ -37,6 +42,26 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 			}
 			//默认值
 			$searchValue = request()->input($searchKey, $default);
+			//优先判断二维数组，多条件
+			if (is_array($searchValue) && count($searchValue) != count($searchValue, 1)) {
+				$multi_str = 'automake.' . $this->table . '_in_multi';
+				$multi_arr = config($multi_str) ?? [];
+				if (in_array($searchKey, $multi_arr)) {
+					//二位数组多重orwhere
+					$q->where(
+						function ($query) use ($searchKey, $searchValue) {
+							foreach ($searchValue as $value) {
+								if (count($value) < 2) {
+									continue;
+								}
+								$query->orWhere(function ($q2) use ($searchKey, $value) {
+									$q2->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
+								});
+							}
+						}
+					);
+				}
+			}
 			//多条件筛选
 			if (in_array($searchKey, $configSearchKeys)) {
 				$q->where(
@@ -107,7 +132,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 	 * @param array $loseWhere 传不筛查的字段数组
 	 * @param bool $pageCustom 分页的问题
 	 */
-	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = false, $return = 'data'): array
+	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = false, $return = 'data', $orderBy = 'id'): array
 	{
 		$this->select = $select;
 		$this->loseWhere = $loseWhere;
@@ -117,7 +142,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				$q->where($key, $value);
 			}
 		}
-		$q->orderBy('id', 'desc');
+		$q->orderBy($orderBy, 'desc');
 		$page =  request()->input('page', 1);
 		$per_page = request()->input('per_page', 15);
 		if ($pageCustom) {
@@ -145,9 +170,13 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		$list[$return] = $forList;
 		return $list;
 	}
-	public function makeCustomPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'data'): array
+	public function makeCustomPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'data', $orderBy = 'id'): array
 	{
-		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return);
+		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy);
+	}
+	public function makeList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'list', $orderBy = 'id'): array
+	{
+		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy);
 	}
 	/**
 	 * 自动更新表字段
