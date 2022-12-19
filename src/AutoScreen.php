@@ -107,7 +107,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 	 * @param array $loseWhere 传不筛查的字段数组
 	 * @param bool $pageCustom 分页的问题
 	 */
-	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = false): array
+	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = false, $return = 'data'): array
 	{
 		$this->select = $select;
 		$this->loseWhere = $loseWhere;
@@ -142,12 +142,12 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		}
 		unset($list['data']);
 		unset($list['list']);
-		$list['data'] = $forList;
+		$list[$return] = $forList;
 		return $list;
 	}
-	public function makeCustomPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true): array
+	public function makeCustomPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'data'): array
 	{
-		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom);
+		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return);
 	}
 	/**
 	 * 自动更新表字段
