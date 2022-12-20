@@ -21,13 +21,18 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 			$tbArr = explode('.', $this->query->from);
 			if (count($tbArr) == 2) {
 				$this->table = $table = $tbArr[1];
+				$schema = Schema::connection(strtolower($tbArr[0]) . '_mysql', $tbArr[0]);
+				#$schema->getConnection()->setDatabaseName(strtolower($tbArr[0]));
 			} else {
 				$this->table = $table = $this->query->from;
+				$schema = Schema::connection('mysql');
 			}
 			$q = ($this->query);
+			//dd(123);
 		} else {
 			$this->table = $table = ($this->query)->getTable();
 			$q = ($this->query)->query();
+			$schema = Schema::connection('mysql');
 		}
 		$q->select($this->select);
 		$default = config('automake.default');
@@ -35,11 +40,13 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		if ($this->query instanceof Builder) {
 			//$this->columnList = $columnList = Schema::getColumnListing($this->query->from);
 			$columnList = [];
-			$res = DB::connection(strtolower($tbArr[0]) . '_mysql')->select('select column_name as `column_name` from information_schema.columns where table_schema =  "' . $tbArr[0] . '" and table_name = "' . $tbArr[1] . '"');
-			collect($res)->each(function ($item) use (&$columnList) {
-				$columnList[] = $item->column_name;
-			});
-			$this->columnList = $columnList;
+			$this->columnList = $columnList = $schema->getColumnListing($table);
+			//dd($columnList);
+			//$res = DB::connection(strtolower($tbArr[0]) . '_mysql')->select('select column_name as `column_name` from information_schema.columns where table_schema =  "' . $tbArr[0] . '" and table_name = "' . $tbArr[1] . '"');
+			// collect($res)->each(function ($item) use (&$columnList) {
+			// 	$columnList[] = $item->column_name;
+			// });
+			//$this->columnList = $columnList;
 			//dd($res);
 		} else {
 			$this->columnList = $columnList = Schema::getColumnListing($table);
@@ -85,11 +92,11 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 			//多条件模糊匹配,name or mobile
 			if (in_array($searchKey, $configSearchKeys)) {
 				$q->where(
-					function ($query) use ($searchKey, $searchValue, $columnList, $table) {
+					function ($query) use ($searchKey, $searchValue, $columnList, $table, $schema) {
 						$search_values = config('automake.search_value');
 						foreach ($search_values as $k => $config_search_name) {
 							if (in_array($config_search_name, $columnList)) {
-								$type = Schema::getColumnType($table, $config_search_name);
+								$type = $schema->getColumnType($table, $config_search_name);
 								if ($type == 'string' && !in_array($searchKey, config('automake.string_equal'))) {
 									$query->where($config_search_name, 'like', '%' . $searchValue . '%');
 								} else {
@@ -126,7 +133,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 					}
 					continue;
 				}
-				$type = Schema::getColumnType($table, $searchKey);
+				$type = $schema->getColumnType($table, $searchKey);
 				//时间筛选,时间格式并且是数组
 				if (is_array($searchValue) && ($type == 'datetime' || $type == 'date')) {
 					$q->where($searchKey, '>=', $searchValue[0] . " 00:00:00")->where($searchKey, '<=', $searchValue[0] . " 23:59:59");
