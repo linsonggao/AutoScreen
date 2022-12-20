@@ -112,7 +112,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 					$lt_arr = config($lt_str) ?? '';
 					if ($between_arr && count($searchValue) >= 2) {
 						$q->where($searchKey, '>=', $searchValue[0])->where($searchKey, '<=', $searchValue[1]);
-					} else if ($between_arr && count($searchValue) == 1) {
+					} else if ($between_arr && count($searchValue) == 1 && strpos($searchValue[0], ',')) {
 						$ageArr = explode(',', $searchValue[0]);
 						if (count($ageArr) == 2) {
 							$q->where($searchKey, '>=', $ageArr[0])->where($searchKey, '<=', $ageArr[1]);
