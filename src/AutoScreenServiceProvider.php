@@ -64,8 +64,12 @@ class AutoScreenServiceProvider extends ServiceProvider
             return  AutoMake::makeAutoQuery();
         });
         //宏反向注册
-        Builder::macro('makeCount', function () {
-            return  AutoMake::makeCount();
+        Builder::macro('makeCount', function (...$item) {
+            if ($item !== false) {
+                return  AutoMake::getQuery($this)->makeCount(...$item);
+            } else {
+                return  AutoMake::getQuery($this);
+            }
         });
     }
 
