@@ -3,6 +3,7 @@
 namespace Lsg\AutoScreen;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
@@ -31,7 +32,18 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		$q->select($this->select);
 		$default = config('automake.default');
 		$configSearchKeys = config('automake.search_key');
-		$this->columnList = $columnList = Schema::getColumnListing($table);
+		if ($this->query instanceof Builder) {
+			//$this->columnList = $columnList = Schema::getColumnListing($this->query->from);
+			$columnList = [];
+			$res = DB::connection(strtolower($tbArr[0]) . '_mysql')->select('select column_name as `column_name` from information_schema.columns where table_schema =  "' . $tbArr[0] . '" and table_name = "' . $tbArr[1] . '"');
+			collect($res)->each(function ($item) use (&$columnList) {
+				$columnList[] = $item->column_name;
+			});
+			$this->columnList = $columnList;
+			//dd($res);
+		} else {
+			$this->columnList = $columnList = Schema::getColumnListing($table);
+		}
 		$searchArr = request()->all();
 		foreach ($searchArr as  $searchKey => $searchValue) {
 			//不进行筛选的数组
@@ -47,12 +59,18 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				$multi_str = 'automake.' . $this->table . '_in_multi';
 				$multi_arr = config($multi_str) ?? [];
 				if (in_array($searchKey, $multi_arr)) {
-					//二位数组多重orwhere
+					//二维数组多重orwhere
 					$q->where(
 						function ($query) use ($searchKey, $searchValue) {
 							foreach ($searchValue as $value) {
 								if (count($value) < 2) {
-									continue;
+									//逗号隔开 $age[0][0] = 1,10
+									$strArr = explode(',', $value[0]);
+									if (count($strArr) == 2) {
+										$value = $strArr;
+									} else {
+										continue;
+									}
 								}
 								$query->orWhere(function ($q2) use ($searchKey, $value) {
 									$q2->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
@@ -61,8 +79,10 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 						}
 					);
 				}
+
+				continue;
 			}
-			//多条件筛选
+			//多条件模糊匹配,name or mobile
 			if (in_array($searchKey, $configSearchKeys)) {
 				$q->where(
 					function ($query) use ($searchKey, $searchValue, $columnList, $table) {
@@ -82,9 +102,31 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 			}
 			//时间与字符串like
 			if (($searchValue || $searchValue == 0) && in_array($searchKey, $columnList) && $searchValue != $default && !in_array($searchKey, $configSearchKeys)) {
-				$type = Schema::getColumnType($table, $searchKey);
 				$between_str = 'automake.' . $this->table . '_between_arr';
 				$between_arr = config($between_str) ?? [];
+				if (is_array($searchValue)) { //如果是数组的话需要分情况
+					//枚举值类型转换
+					$gt_str = 'automake.' . $this->table . '_gt_arr';
+					$gt_arr = config($gt_str) ?? '';
+					$lt_str = 'automake.' . $this->table . '_lt_arr';
+					$lt_arr = config($lt_str) ?? '';
+					if ($between_arr && count($searchValue) >= 2) {
+						$q->where($searchKey, '>=', $searchValue[0])->where($searchKey, '<=', $searchValue[1]);
+					} else if ($between_arr && count($searchValue) == 1) {
+						$ageArr = explode(',', $searchValue[0]);
+						if (count($ageArr) == 2) {
+							$q->where($searchKey, '>=', $ageArr[0])->where($searchKey, '<=', $ageArr[1]);
+						}
+					} else if ($gt_arr && count($gt_arr) >= 1) {
+						$q->where($searchKey, '>=', $searchValue);
+					} else if ($lt_arr && count($gt_arr) >= 1) {
+						$q->where($searchKey, '<=', $searchValue);
+					} else {
+						$q->whereIn($searchKey, $searchValue);
+					}
+					continue;
+				}
+				$type = Schema::getColumnType($table, $searchKey);
 				//时间筛选,时间格式并且是数组
 				if (is_array($searchValue) && ($type == 'datetime' || $type == 'date')) {
 					$q->where($searchKey, '>=', $searchValue[0] . " 00:00:00")->where($searchKey, '<=', $searchValue[0] . " 23:59:59");
@@ -95,21 +137,6 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 					$q->where($searchKey, 'like', '%' . $searchValue . '%');
 				} else if (($type == 'boolean' || $type == 'integer') && is_numeric($searchValue)) { //如果是int值则直接等于
 					$q->where($searchKey, $searchValue);
-				} else if (is_array($searchValue)) { //如果是数组的话需要分情况
-					//枚举值类型转换
-					$gt_str = 'automake.' . $this->table . '_gt_arr';
-					$gt_arr = config($gt_str) ?? '';
-					$lt_str = 'automake.' . $this->table . '_lt_arr';
-					$lt_arr = config($lt_str) ?? '';
-					if ($between_arr && count($searchValue) >= 2) {
-						$q->where($searchKey, '>=', $searchValue[0])->where($searchKey, '<=', $searchValue[1]);
-					} else if ($gt_arr && count($gt_arr) >= 1) {
-						$q->where($searchKey, '>=', $searchValue);
-					} else if ($lt_arr && count($gt_arr) >= 1) {
-						$q->where($searchKey, '<=', $searchValue);
-					} else {
-						$q->whereIn($searchKey, $searchValue);
-					}
 				} else if ($type == 'integer' && is_string($searchValue)) {
 					$between_str = 'automake.' . $this->table . '_between_arr';
 					$between_arr = config($between_str) ?? '';
