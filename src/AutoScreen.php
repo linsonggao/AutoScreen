@@ -207,6 +207,19 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 	{
 		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy);
 	}
+	/**
+	 * 返回总数
+	 */
+	public function makeCount($screen = [])
+	{
+		$q = $this->makeAutoQuery();
+		if ($screen) {
+			foreach ($screen as $key => $value) {
+				$q->where($key, $value);
+			}
+		}
+		return $q->count();
+	}
 	public function makeList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'list', $orderBy = 'id'): array
 	{
 		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy);
