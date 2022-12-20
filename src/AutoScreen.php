@@ -169,7 +169,13 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				$q->where($key, $value);
 			}
 		}
-		$q->orderBy($orderBy, 'desc');
+		if (is_array($orderBy)) {
+			foreach ($orderBy as $key => $column) {
+				$q->orderBy($column[0], $column[1]);
+			}
+		} else {
+			$q->orderBy($orderBy, 'desc');
+		}
 		$page =  request()->input('page', 1);
 		$per_page = request()->input('per_page', 15);
 		if ($pageCustom) {
