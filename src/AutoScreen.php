@@ -119,6 +119,11 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				$between_str = 'automake.' . $this->table . '_between_arr';
 				$between_arr = config($between_str) ?? [];
 				if (is_array($searchValue)) { //如果是数组的话需要分情况
+					//公司项目_tm结尾_at结尾_dt为时间
+					if (strpos($searchKey, '_tm') || strpos($searchKey, '_at') || strpos($searchKey, '_dt') || strpos($searchKey, '_date') || strpos($searchKey, '_time')) {
+						$q->where($searchKey, '>=', $searchValue[0] . " 00:00:00")->where($searchKey, '<=', $searchValue[1] . " 23:59:59");
+						continue;
+					}
 					//枚举值类型转换
 					$gt_str = 'automake.' . $this->table . '_gt_arr';
 					$gt_arr = config($gt_str) ?? '';
@@ -143,7 +148,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				$type = $schema->getColumnType($table, $searchKey);
 				//时间筛选,时间格式并且是数组
 				if (is_array($searchValue) && ($type == 'datetime' || $type == 'date')) {
-					$q->where($searchKey, '>=', $searchValue[0] . " 00:00:00")->where($searchKey, '<=', $searchValue[0] . " 23:59:59");
+					$q->where($searchKey, '>=', $searchValue[0] . " 00:00:00")->where($searchKey, '<=', $searchValue[1] . " 23:59:59");
 				} else if (($type == 'string' || $type == 'text') && !in_array($searchKey, config('automake.string_equal'))  &&
 					!in_array($searchKey, $between_arr)
 				) { //如果是字符串并且默认为like
