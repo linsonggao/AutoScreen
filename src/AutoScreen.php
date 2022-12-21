@@ -180,7 +180,23 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		$q = $this->makeAutoQuery();
 		if ($screen) {
 			foreach ($screen as $key => $value) {
-				$q->where($key, $value);
+				if (is_array($value)) {
+					//如果是二维数组
+					if (count($value) != count($value, 1)) {
+						//where[] = ['age'=>[40,70]]
+						$searchKey = array_key_first($value);
+						$q->where($searchKey, '>=', $value[$searchKey][0])->where($searchKey, '<=', $value[$searchKey][1]);
+					} else {
+						//where[] = ['resulut','like','阳']
+						if ($value[1] == 'like') {
+							$q->where($value[0], $value[1], '%' . $value[2] . '%');
+						} else {
+							$q->where($value[0], $value[1], $value[2]);
+						}
+					}
+				} else {
+					$q->where($key, $value);
+				}
 			}
 		}
 		if (is_array($orderBy)) {
@@ -229,7 +245,23 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		$q = $this->makeAutoQuery();
 		if ($screen) {
 			foreach ($screen as $key => $value) {
-				$q->where($key, $value);
+				if (is_array($value)) {
+					//如果是二维数组
+					if (count($value) != count($value, 1)) {
+						//where[] = ['age'=>[40,70]]
+						$searchKey = array_key_first($value);
+						$q->where($searchKey, '>=', $value[$searchKey][0])->where($searchKey, '<=', $value[$searchKey][1]);
+					} else {
+						//where[] = ['resulut','like','阳']
+						if ($value[1] == 'like') {
+							$q->where($value[0], $value[1], '%' . $value[2] . '%');
+						} else {
+							$q->where($value[0], $value[1], $value[2]);
+						}
+					}
+				} else {
+					$q->where($key, $value);
+				}
 			}
 		}
 		return $q->count();
