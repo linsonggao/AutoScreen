@@ -75,13 +75,20 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 									$strArr = explode(',', $value[0]);
 									if (count($strArr) == 2) {
 										$value = $strArr;
+										//$age[][] = 1,10
+										//字符串值between
+										$query->orWhere(function ($q2) use ($searchKey, $value) {
+											$q2->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
+										});
 									} else {
+										//$age[][] = 1
+										//单个值大于
+										$query->orWhere(function ($q2) use ($searchKey, $value) {
+											$q2->where($searchKey, '>=', $value[0]);
+										});
 										continue;
 									}
 								}
-								$query->orWhere(function ($q2) use ($searchKey, $value) {
-									$q2->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
-								});
 							}
 						}
 					);
