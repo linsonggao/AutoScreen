@@ -195,6 +195,8 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 						//where[] = ['resulut','like','阳']
 						if ($value[1] == 'like') {
 							$q->where($value[0], $value[1], '%' . $value[2] . '%');
+						} elseif ($value[1] == 'in' && is_array($value[2])) {
+							$q->whereIn($value[0], $value[2]);
 						} else {
 							$q->where($value[0], $value[1], $value[2]);
 						}
