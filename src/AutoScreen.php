@@ -199,6 +199,12 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 						//where[] = ['age'=>[40,70]]
 						if (isset($value[1]) && $value[1] == 'in') {
 							$q->whereIn($value[0], $value[2]);
+						} elseif (isset($value[1]) && $value[1] == 'orLike') {
+							$q->where(function ($q2) use ($value) {
+								foreach ($value[2] as $v) {
+									$q2->orWhere($value[0], 'like', '%' . $v . '%');
+								}
+							});
 						} else {
 							$searchKey = array_key_first($value);
 							$q->where($searchKey, '>=', $value[$searchKey][0])->where($searchKey, '<=', $value[$searchKey][1]);
