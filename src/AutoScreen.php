@@ -120,7 +120,15 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				$between_arr = config($between_str) ?? [];
 				if (is_array($searchValue)) { //如果是数组的话需要分情况
 					//公司项目_tm结尾_at结尾_dt为时间
-					if (strpos($searchKey, '_tm') || strpos($searchKey, '_at') || strpos($searchKey, '_dt') || strpos($searchKey, '_date') || strpos($searchKey, '_time')) {
+					if (
+						strpos($searchKey, '_tm') ||
+						strpos($searchKey, '_at') ||
+						strpos($searchKey, '_dt') ||
+						strpos($searchKey, '_date') ||
+						strpos($searchKey, '_time') ||
+						strpos($searchKey, 'tm_') !== false ||
+						strpos($searchKey, 'dt_') !== false
+					) {
 						$q->where($searchKey, '>=', $searchValue[0] . " 00:00:00")->where($searchKey, '<=', $searchValue[1] . " 23:59:59");
 						continue;
 					}
