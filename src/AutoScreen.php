@@ -189,14 +189,17 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 					//如果是二维数组
 					if (count($value) != count($value, 1)) {
 						//where[] = ['age'=>[40,70]]
-						$searchKey = array_key_first($value);
-						$q->where($searchKey, '>=', $value[$searchKey][0])->where($searchKey, '<=', $value[$searchKey][1]);
+						if (isset($value[1]) && $value[1] == 'in') {
+							$q->whereIn($value[0], $value[2]);
+						} else {
+							$searchKey = array_key_first($value);
+							$q->where($searchKey, '>=', $value[$searchKey][0])->where($searchKey, '<=', $value[$searchKey][1]);
+						}
+						//where[] = ['age','in',[1,2]]
 					} else {
 						//where[] = ['resulut','like','阳']
 						if ($value[1] == 'like') {
 							$q->where($value[0], $value[1], '%' . $value[2] . '%');
-						} elseif ($value[1] == 'in' && is_array($value[2])) {
-							$q->whereIn($value[0], $value[2]);
 						} else {
 							$q->where($value[0], $value[1], $value[2]);
 						}
