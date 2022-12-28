@@ -96,6 +96,34 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 
 				continue;
 			}
+			//判断json数组,多条件age[] = [18,20]
+			if (is_array($searchValue) && is_array(json_decode($searchValue[0]))) {
+				//二维数组多重orwhere
+				$q->where(
+					function ($query) use ($searchKey, $searchValue) {
+						foreach ($searchValue as $value) {
+							//逗号隔开 $age[0][0] = 1,10
+							$strArr = json_decode($value);
+							if (count($strArr) == 2) {
+								$value = $strArr;
+								//$age[][] = 1,10
+								//字符串值between
+								$query->orWhere(function ($q2) use ($searchKey, $value) {
+									$q2->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
+								});
+							} else {
+								//$age[][] = 1
+								//单个值大于
+								$query->orWhere(function ($q2) use ($searchKey, $value) {
+									$q2->where($searchKey, '>=', $value[0]);
+								});
+								continue;
+							}
+						}
+					}
+				);
+				continue;
+			}
 			//多条件模糊匹配,name or mobile
 			if (in_array($searchKey, $configSearchKeys)) {
 				$q->where(
