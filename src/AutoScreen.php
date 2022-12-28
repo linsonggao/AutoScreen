@@ -113,6 +113,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 								});
 							} else {
 								//$age[][] = 1
+								$value = $strArr;
 								//单个值大于
 								$query->orWhere(function ($q2) use ($searchKey, $value) {
 									$q2->where($searchKey, '>=', $value[0]);
@@ -204,7 +205,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				}
 			}
 		}
-		//$q->where('test', 'test');
+		#$q->where('test', 'test');
 		return $q;
 	}
 	/**
