@@ -169,18 +169,18 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 					$gt_arr = config($gt_str) ?? '';
 					$lt_str = 'automake.' . $this->table . '_lt_arr';
 					$lt_arr = config($lt_str) ?? '';
-					if ($between_arr && count($searchValue) >= 2) {
+					if ($between_arr && count($searchValue) >= 2 && in_array($searchKey, $between_arr)) { //age[]大于2个值的时候
 						$q->where($searchKey, '>=', $searchValue[0])->where($searchKey, '<=', $searchValue[1]);
-					} else if ($between_arr && count($searchValue) == 1 && strpos($searchValue[0], ',')) {
+					} else if ($between_arr && count($searchValue) == 1 && strpos($searchValue[0], ',') && in_array($searchKey, $between_arr)) { //age[] = 1,100的时候
 						$ageArr = explode(',', $searchValue[0]);
 						if (count($ageArr) == 2) {
 							$q->where($searchKey, '>=', $ageArr[0])->where($searchKey, '<=', $ageArr[1]);
 						}
-					} else if ($gt_arr && count($gt_arr) >= 1) {
+					} else if ($gt_arr && in_array($searchKey, $gt_arr)) { //age[]=18，大于18
 						$q->where($searchKey, '>=', $searchValue);
-					} else if ($lt_arr && count($gt_arr) >= 1) {
+					} else if ($lt_arr && in_array($searchKey, $lt_arr)) {
 						$q->where($searchKey, '<=', $searchValue);
-					} else {
+					} else { //默认wherein
 						$q->whereIn($searchKey, $searchValue);
 					}
 					continue;
