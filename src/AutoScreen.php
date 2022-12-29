@@ -239,7 +239,25 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 							});
 						} else {
 							$searchKey = array_key_first($value);
-							$q->where($searchKey, '>=', $value[$searchKey][0])->where($searchKey, '<=', $value[$searchKey][1]);
+							//如果是二维数组需要or判断
+							if (is_array($value[$searchKey][0])) {
+								//dd($value[$searchKey][1]);
+								# code...
+								//dd($multi_value);
+								$q->where(function ($q2) use ($value, $searchKey) {
+									foreach ($value[$searchKey] as $multi_value) {
+										if (count($multi_value) == 2) {
+											$q2->orWhere(function ($q3) use ($multi_value, $searchKey) {
+												$q3->where($searchKey, '>=', $multi_value[0])->where($searchKey, '<=', $multi_value[1]);
+											});
+										} else if (count($multi_value) == 1) {
+											$q2->orWhere($searchKey, $multi_value[0]);
+										}
+									}
+								});
+							} else {
+								$q->where($searchKey, '>=', $value[$searchKey][0])->where($searchKey, '<=', $value[$searchKey][1]);
+							}
 						}
 						//where[] = ['age','in',[1,2]]
 					} else {
