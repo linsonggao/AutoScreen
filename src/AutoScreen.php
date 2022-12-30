@@ -2,6 +2,7 @@
 
 namespace Lsg\AutoScreen;
 
+use Closure;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -218,11 +219,14 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 	 * @param array $loseWhere 传不筛查的字段数组
 	 * @param bool $pageCustom 分页的问题
 	 */
-	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = false, $return = 'data', $orderBy = 'id'): array
+	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = false, $return = 'data', $orderBy = 'id', $func = false): array
 	{
 		$this->select = $select;
 		$this->loseWhere = $loseWhere;
 		$q = $this->makeAutoQuery();
+		if ($func instanceof Closure) {
+			$q->where($func);
+		}
 		if ($screen) {
 			foreach ($screen as $key => $value) {
 				if (is_array($value)) {
