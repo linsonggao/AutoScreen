@@ -187,6 +187,15 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 					continue;
 				}
 				$type = $schema->getColumnType($table, $searchKey);
+				if (in_array($searchKey, config('automake.string_equal'))) {
+					$q->where($searchKey, $searchValue);
+					continue;
+				}
+				$table_string_equal = 'automake.' . $this->table . '_string_equal';
+				if (in_array($searchKey, config($table_string_equal))) {
+					$q->where($searchKey, $searchValue);
+					continue;
+				}
 				//时间筛选,时间格式并且是数组
 				if (is_array($searchValue) && ($type == 'datetime' || $type == 'date')) {
 					$q->where($searchKey, '>=', $searchValue[0] . " 00:00:00")->where($searchKey, '<=', $searchValue[1] . " 23:59:59");
