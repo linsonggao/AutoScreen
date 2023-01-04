@@ -7,7 +7,7 @@ abstract class  AutoScreenAbstract implements AutoScreenInterface
   protected $query;
   protected $page;
   protected $per_page;
-  protected $select;
+  protected $select = ['*'];
   protected $table;
   protected $columnList;
   protected $requestData;
