@@ -320,9 +320,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		$list[$return] = $forList;
 		return $list;
 	}
-	public function makeCustomPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'data', $orderBy = 'id'): array
+	public function makeCustomPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'data', $orderBy = 'id', $func = false): array
 	{
-		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy);
+		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy, $func);
 	}
 	/**
 	 * 返回总数
@@ -353,9 +353,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		}
 		return $q->count();
 	}
-	public function makeList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'list', $orderBy = 'id'): array
+	public function makeList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'list', $orderBy = 'id', $func = false): array
 	{
-		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy);
+		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy, $func);
 	}
 	/**
 	 * 自动更新表字段
