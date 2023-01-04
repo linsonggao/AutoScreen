@@ -192,9 +192,11 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 					continue;
 				}
 				$table_string_equal = 'automake.' . $this->table . '_string_equal';
-				if (in_array($searchKey, config($table_string_equal))) {
-					$q->where($searchKey, $searchValue);
-					continue;
+				if (is_array(config($table_string_equal))) {
+					if (in_array($searchKey, config($table_string_equal))) {
+						$q->where($searchKey, $searchValue);
+						continue;
+					}
 				}
 				//时间筛选,时间格式并且是数组
 				if (is_array($searchValue) && ($type == 'datetime' || $type == 'date')) {
