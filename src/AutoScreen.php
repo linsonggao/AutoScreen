@@ -61,7 +61,8 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				}
 			}
 			//默认值
-			$searchValue = $searchArr['searchKey'] ?? $default; //request()->input($searchKey, $default);
+			$searchValue = $searchArr[$searchKey] ?: $default; //request()->input($searchKey, $default);
+
 			//优先判断二维数组，多条件
 			if (is_array($searchValue) && count($searchValue) != count($searchValue, 1)) {
 				$multi_str = 'automake.' . $this->table . '_in_multi';
@@ -204,6 +205,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				} else if (($type == 'string' || $type == 'text') && !in_array($searchKey, config('automake.string_equal'))  &&
 					!in_array($searchKey, $between_arr)
 				) { //如果是字符串并且默认为like
+
 					$searchValue = str_replace('%', "\%", $searchValue);
 					$q->where($searchKey, 'like', '%' . $searchValue . '%');
 				} else if (($type == 'boolean' || $type == 'integer') && is_numeric($searchValue)) { //如果是int值则直接等于
