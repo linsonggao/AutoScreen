@@ -52,7 +52,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		} else {
 			$this->columnList = $columnList = Schema::getColumnListing($table);
 		}
-		$searchArr = request()->all();
+		$searchArr = $this->requestData ?: request()->all();
 		foreach ($searchArr as  $searchKey => $searchValue) {
 			//不进行筛选的数组
 			if ($this->loseWhere) {
@@ -61,7 +61,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				}
 			}
 			//默认值
-			$searchValue = request()->input($searchKey, $default);
+			$searchValue = $searchArr['searchKey'] ?? $default; //request()->input($searchKey, $default);
 			//优先判断二维数组，多条件
 			if (is_array($searchValue) && count($searchValue) != count($searchValue, 1)) {
 				$multi_str = 'automake.' . $this->table . '_in_multi';
@@ -230,8 +230,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 	 * @param array $loseWhere 传不筛查的字段数组
 	 * @param bool $pageCustom 分页的问题
 	 */
-	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = false, $return = 'data', $orderBy = 'id', $func = false): array
+	public function makeAutoPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = false, $return = 'data', $orderBy = 'id', $func = false, $requestData = []): array
 	{
+		$this->requestData = $requestData;
 		$this->select = $select;
 		$this->loseWhere = $loseWhere;
 		$q = $this->makeAutoQuery();
@@ -322,9 +323,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		$list[$return] = $forList;
 		return $list;
 	}
-	public function makeCustomPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'data', $orderBy = 'id', $func = false): array
+	public function makeCustomPageList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'data', $orderBy = 'id', $func = false, $requestData = []): array
 	{
-		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy, $func);
+		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy, $func, $requestData);
 	}
 	/**
 	 * 返回总数
@@ -355,9 +356,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		}
 		return $q->count();
 	}
-	public function makeList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'list', $orderBy = 'id', $func = false): array
+	public function makeList($screen = [], $select = ["*"], $loseWhere = [], $pageCustom = true, $return = 'list', $orderBy = 'id', $func = false, $requestData = []): array
 	{
-		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy, $func);
+		return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy, $func, $requestData);
 	}
 	/**
 	 * 自动更新表字段
