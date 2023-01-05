@@ -24,22 +24,7 @@ php代码
 use \Lsg\AutoScreen\AutoMake;
 use App\Models\Admin;
 
-$query = new Admin();
-$res = AutoMake::getQuery($query)->makeAutoQuery();
-dd($res->get()->toArray());
-
-
-$query = new Admin();
-$res = AutoMake::getQuery($query)->doAutoUpdate();
-dd($res);
-
-
-$query = new Admin();
-$res = AutoMake::getQuery($query)->makeAutoPageList();
-dd($res);
-
-
-$res = Admin::autoMake(['name'=>'测试']);
+$res = Admin::makeList(['name'=>'测试']);
 dd($res);
 
 $res = Admin::autoUpdate(['status']);
