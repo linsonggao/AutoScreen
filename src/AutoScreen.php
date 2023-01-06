@@ -132,6 +132,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 			}
 			//多条件模糊匹配,name or mobile
 			if (in_array($searchKey, $configSearchKeys)) {
+
 				$q->where(
 					function ($query) use ($searchKey, $searchValue, $columnList, $table, $schema) {
 						$search_values = config('automake.search_value');
@@ -139,7 +140,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 							if (in_array($config_search_name, $columnList)) {
 								$type = $schema->getColumnType($table, $config_search_name);
 								if ($type == 'string' && !in_array($searchKey, config('automake.string_equal'))) {
-									$query->where($config_search_name, 'like', '%' . $searchValue . '%');
+									$query->orWhere($config_search_name, 'like', '%' . $searchValue . '%');
 								} else {
 									$query->orWhere($config_search_name, $searchValue);
 								}
