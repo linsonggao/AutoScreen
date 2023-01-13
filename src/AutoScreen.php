@@ -61,7 +61,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				}
 			}
 			//默认值
-			$searchValue = $searchArr[$searchKey] ?: $default; //request()->input($searchKey, $default);
+			$searchValue = $searchArr[$searchKey] ?? $default; //request()->input($searchKey, $default);
 
 			//优先判断二维数组，多条件
 			if (is_array($searchValue) && count($searchValue) != count($searchValue, 1)) {
@@ -132,7 +132,6 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 			}
 			//多条件模糊匹配,name or mobile
 			if (in_array($searchKey, $configSearchKeys)) {
-
 				$q->where(
 					function ($query) use ($searchKey, $searchValue, $columnList, $table, $schema) {
 						$search_values = config('automake.search_value');
@@ -150,7 +149,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 				);
 			}
 			//时间与字符串like
+
 			if (($searchValue || $searchValue == 0) && in_array($searchKey, $columnList) && $searchValue != $default && !in_array($searchKey, $configSearchKeys)) {
+
 				$between_str = 'automake.' . $this->table . '_between_arr';
 				$between_arr = config($between_str) ?? [];
 				if (is_array($searchValue)) { //如果是数组的话需要分情况
