@@ -334,9 +334,12 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 	/**
 	 * 返回总数
 	 */
-	public function makeCount($screen = [])
+	public function makeCount($screen = [], $func = false)
 	{
 		$q = $this->makeAutoQuery();
+		if ($func instanceof Closure) {
+			$q->where($func);
+		}
 		if ($screen) {
 			foreach ($screen as $key => $value) {
 				if (is_array($value)) {
