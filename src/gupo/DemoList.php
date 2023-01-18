@@ -52,10 +52,13 @@ trait DemoList
         'town_code'    => 'curr_addr_twn_cd',
     ];
 
+    //基础查询
     protected static $baseWhere = ['is_宫颈癌导致死亡' => 0, 'year' => '全部'];
 
+    //基础查询-无年份
     protected static $baseWhereNoYear = ['is_宫颈癌导致死亡' => 0];
 
+    //基础查询字段
     protected static $baseSelect = ['user_id', 'gdr', 'age', 'ptt_nm', 'slf_tel_no', 'id_crd_no', 'addr', 'curr_addr_twn_cd', 'curr_addr_twn_nm', 'curr_addr_vlg_cd', 'curr_addr_vlg_nm', 'is_宫颈癌手术', 'oprt_mdc_org_cd_宫颈癌'];
 
     //年龄范围人群
