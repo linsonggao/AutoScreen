@@ -15,7 +15,7 @@ trait BaseList
      */
     public function list($method)
     {
-        $model = new $this->bussinessModel;
+        $model = new self::$bussinessModel;
         /**
          * 缓存
          */
@@ -34,16 +34,16 @@ trait BaseList
             foreach ($requestAll as $key => $value) {
                 $new_key =
                   match ($key) {
-                      'id'           => $this->baseColumnCs['id'],
-                      'name'         => $this->baseColumnCs['name'],
-                      'gender'       => $this->baseColumnCs['gender'],
-                      'mobile'       => $this->baseColumnCs['mobile'],
-                      'card_no'      => $this->baseColumnCs['card_no'],
-                      'address'      => $this->baseColumnCs['address'],
-                      'village_name' => $this->baseColumnCs['village_name'],
-                      'village_code' => $this->baseColumnCs['village_code'],
-                      'town_name'    => $this->baseColumnCs['town_name'],
-                      'town_code'    => $this->baseColumnCs['town_code'],
+                      'id'           => self::$baseColumnCs['id'],
+                      'name'         => self::$baseColumnCs['name'],
+                      'gender'       => self::$baseColumnCs['gender'],
+                      'mobile'       => self::$baseColumnCs['mobile'],
+                      'card_no'      => self::$baseColumnCs['card_no'],
+                      'address'      => self::$baseColumnCs['address'],
+                      'village_name' => self::$baseColumnCs['village_name'],
+                      'village_code' => self::$baseColumnCs['village_code'],
+                      'town_name'    => self::$baseColumnCs['town_name'],
+                      'town_code'    => self::$baseColumnCs['town_code'],
                       default        => $key,
                   };
                 //附加项目转换
@@ -57,7 +57,7 @@ trait BaseList
                 $requestData[$new_key] = $value;
             }
             //数据部表无业务字段
-            foreach ($this->bussinessColumn as $value) {
+            foreach (self::$bussinessColumn as $value) {
                 if (isset($requestAll[$value])) {
                     $patientsAll = $model->makeList(requestData: ['page' => 1, 'per_page' => 99999999, ...$requestAll]);
                     $allListArr = $patientsAll['list']->toArray();
@@ -69,19 +69,19 @@ trait BaseList
             }
             $list = $this->tableList($method, $requestData);
             // 缓存用户数据
-            Cache::put($cacheKey, json_encode($list), $this->cacheExpire);
+            Cache::put($cacheKey, json_encode($list), self::$cacheExpire);
         }
         //新增业务数据字段
         if (!$cardScreenArr) {
             $listArr = json_decode(json_encode($list['list']), true);
             $inCrdArr = array_column($listArr, 'id_crd_no');
-            $baseBussinessSelect = array_values(array_intersect($this->{$method}, $this->bussinessColumn));
+            $baseBussinessSelect = array_values(array_intersect($this->{$method}, self::$bussinessColumn));
             $arrData = $model->select(['id', 'card_no', ...$baseBussinessSelect])->whereIn('card_no', $inCrdArr)->get()->toArray();
             $cardScreenArr = array_column($arrData, null, 'card_no');
         }
         //取交集
         foreach ($list['list'] as $key => $value) {
-            foreach ($this->bussinessColumn as $k => $column) {
+            foreach (self::$bussinessColumn as $k => $column) {
                 if (in_array($column, $this->{$method})) {
                     if (isset($cardScreenArr[$value['id_crd_no']][$column]) || is_null($cardScreenArr[$value['id_crd_no']][$column])) {
                         $list['list'][$key][$column] = $cardScreenArr[$value['id_crd_no']][$column];
@@ -108,7 +108,7 @@ trait BaseList
         if ($key = array_search('oprt_info_url', $addSelect)) {
             unset($addSelect[$key]);
         }
-        foreach ($this->bussinessColumn as $value) {
+        foreach (self::$bussinessColumn as $value) {
             if ($key = array_search($value, $addSelect)) {
                 unset($addSelect[$key]);
             }
