@@ -100,9 +100,11 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 			}
 			//判断json数组,多条件age[] = [18,20]
 			if (is_array($searchValue) && is_array(json_decode($searchValue[0]))) {
+
 				$multi_str = 'automake.' . $this->table . '_in_multi';
 				$multi_arr = config($multi_str) ?? [];
 				if (in_array($searchKey, $multi_arr)) {
+
 					$q->where(
 						function ($query) use ($searchKey, $searchValue) {
 							foreach ($searchValue as $value) {
@@ -300,8 +302,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 		} else {
 			$q->orderBy($orderBy, 'desc');
 		}
-		$page =  request()->input('page', 1);
-		$per_page = request()->input('per_page', 15);
+		$searchArr = $this->requestData ?: request()->all();
+		$page = $searchArr['page'] ?? 1;
+		$per_page = $searchArr['per_page'] ?? 15;
 		if ($pageCustom) {
 			$list = $q->customPaginate(true, $per_page, $page)->toArray();
 		} else {
