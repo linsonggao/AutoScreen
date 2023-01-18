@@ -11,10 +11,10 @@ use App\Models\Patient;
 trait DemoList
 {
     //缓存时间
-    protected $cache_expire = 1800;
+    protected static $cacheExpire = 1800;
 
     //业务字段
-    protected $bussiness_column = [
+    protected static $bussinessColumn = [
         'is_tel_call',
         'sms_msg_num',
         'not_trtmt_is_tel_call',
@@ -34,10 +34,10 @@ trait DemoList
     ];
 
     //业务模型
-    protected $bussinessModel = Patient::class;
+    protected static $bussinessModel = Patient::class;
 
     //基础字段转换
-    protected $baseColumnCs = [
+    protected static $baseColumnCs = [
         'id'           => 'user_id',
         'name'         => 'ptt_nm',
         'gender'       => 'gdr',
