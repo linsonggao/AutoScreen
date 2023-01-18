@@ -57,7 +57,7 @@ trait BaseList
                 $requestData[$new_key] = $value;
             }
             //数据部表无业务字段
-            foreach ($this->bussiness_column as $value) {
+            foreach ($this->bussinessColumn as $value) {
                 if (isset($requestAll[$value])) {
                     $patientsAll = $model->makeList(requestData: ['page' => 1, 'per_page' => 99999999, ...$requestAll]);
                     $allListArr = $patientsAll['list']->toArray();
@@ -69,19 +69,19 @@ trait BaseList
             }
             $list = $this->tableList($method, $requestData);
             // 缓存用户数据
-            Cache::put($cacheKey, json_encode($list), $this->cache_expire);
+            Cache::put($cacheKey, json_encode($list), $this->cacheExpire);
         }
         //新增业务数据字段
         if (!$cardScreenArr) {
             $listArr = json_decode(json_encode($list['list']), true);
             $inCrdArr = array_column($listArr, 'id_crd_no');
-            $baseBussinessSelect = array_values(array_intersect($this->{$method}, $this->bussiness_column));
+            $baseBussinessSelect = array_values(array_intersect($this->{$method}, $this->bussinessColumn));
             $arrData = $model->select(['id', 'card_no', ...$baseBussinessSelect])->whereIn('card_no', $inCrdArr)->get()->toArray();
             $cardScreenArr = array_column($arrData, null, 'card_no');
         }
         //取交集
         foreach ($list['list'] as $key => $value) {
-            foreach ($this->bussiness_column as $k => $column) {
+            foreach ($this->bussinessColumn as $k => $column) {
                 if (in_array($column, $this->{$method})) {
                     if (isset($cardScreenArr[$value['id_crd_no']][$column]) || is_null($cardScreenArr[$value['id_crd_no']][$column])) {
                         $list['list'][$key][$column] = $cardScreenArr[$value['id_crd_no']][$column];
@@ -108,7 +108,7 @@ trait BaseList
         if ($key = array_search('oprt_info_url', $addSelect)) {
             unset($addSelect[$key]);
         }
-        foreach ($this->bussiness_column as $value) {
+        foreach ($this->bussinessColumn as $value) {
             if ($key = array_search($value, $addSelect)) {
                 unset($addSelect[$key]);
             }
