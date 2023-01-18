@@ -33,6 +33,19 @@ trait DemoList
   ];
   //业务模型
   protected $bussinessModel = Patient::class;
+  //基础字段转换
+  protected $baseColumnCs = [
+    'id' => 'user_id',
+    'name' => 'ptt_nm',
+    'gender' => 'gdr',
+    'mobile' => 'tel_no',
+    'card_no' => 'id_crd_no',
+    'address' => 'addr',
+    'village_name' => 'curr_addr_vlg_nm',
+    'village_code' => 'curr_addr_vlg_cd',
+    'town_name' => 'curr_addr_twn_nm',
+    'town_code' => 'curr_addr_twn_cd',
+  ];
   protected static $baseWhere = ['is_宫颈癌导致死亡' => 0, 'year' => '全部'];
   protected static $baseWhereNoYear = ['is_宫颈癌导致死亡' => 0];
   protected static $baseSelect = ['user_id', 'gdr', 'age', 'ptt_nm', 'slf_tel_no', 'id_crd_no', 'addr', 'curr_addr_twn_cd', 'curr_addr_twn_nm', 'curr_addr_vlg_cd', 'curr_addr_vlg_nm', 'is_宫颈癌手术', 'oprt_mdc_org_cd_宫颈癌'];

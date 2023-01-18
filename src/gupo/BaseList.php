@@ -33,16 +33,16 @@ trait BaseList
       foreach ($requestAll as $key => $value) {
         $new_key =
           match ($key) {
-            'id' => 'user_id',
-            'name' => 'ptt_nm',
-            'gender' => 'gdr',
-            'mobile' => 'slf_tel_no',
-            'card_no' => 'id_crd_no',
-            'address' => 'addr',
-            'village_name' => 'curr_addr_vlg_nm',
-            'village_code' => 'curr_addr_vlg_cd',
-            'town_name' => 'curr_addr_twn_nm',
-            'town_code' => 'curr_addr_twn_cd',
+            'id' => $this->baseColumnCs['id'],
+            'name' => $this->baseColumnCs['name'],
+            'gender' => $this->baseColumnCs['gender'],
+            'mobile' => $this->baseColumnCs['mobile'],
+            'card_no' => $this->baseColumnCs['card_no'],
+            'address' => $this->baseColumnCs['address'],
+            'village_name' => $this->baseColumnCs['village_name'],
+            'village_code' => $this->baseColumnCs['village_code'],
+            'town_name' => $this->baseColumnCs['town_name'],
+            'town_code' => $this->baseColumnCs['town_code'],
             default => $key,
           };
         //附加项目转换
