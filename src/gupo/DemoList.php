@@ -10,6 +10,8 @@ use App\Models\Patient;
  */
 trait DemoList
 {
+    use \Lsg\AutoScreen\Gupo\BaseList;
+
     //缓存时间
     protected static $cacheExpire = 1800;
 
