@@ -15,6 +15,9 @@ trait DemoList
     //缓存时间
     protected static $cacheExpire = 1800;
 
+    //业务模型
+    protected static $bussinessModel = Patient::class;
+
     //业务字段
     protected static $bussinessColumn = [
         'is_tel_call',
@@ -34,9 +37,6 @@ trait DemoList
         'untreated_cause',
         'remark',
     ];
-
-    //业务模型
-    protected static $bussinessModel = Patient::class;
 
     //基础字段转换
     protected static $baseColumnCs = [
