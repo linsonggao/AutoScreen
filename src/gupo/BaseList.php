@@ -67,6 +67,11 @@ trait BaseList
                     break;
                 }
             }
+            //此处是为了兼容不写year条件报错的bug
+            if ($requestData['year']) {
+                unset(self::$baseWhere['year']);
+            }
+
             $list = $this->tableList($method, $requestData);
             // 缓存用户数据
             Cache::put($cacheKey, json_encode($list), self::$cacheExpire);
