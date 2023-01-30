@@ -119,8 +119,13 @@ trait BaseList
                 unset($addSelect[$key]);
             }
         }
-
-        return array_merge(self::$baseSelect, $addSelect);
+        //基础表基础字段还是关联表的基础字段
+        $noCsItems = self::$loseBaseColumnCsItems;
+        if (!in_array($appendItem, $noCsItems)) {
+            return array_merge(self::$loseCsBaseSelect, $addSelect);
+        } else {
+            return array_merge(self::$baseSelect, $addSelect);
+        }
     }
 
     //固定基础查询条件
