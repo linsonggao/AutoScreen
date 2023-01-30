@@ -51,9 +51,6 @@ trait BaseList
                 if (isset($allItemKeys[$new_key])) {
                     $new_key = $allItemKeys[$new_key];
                 }
-                if ($key == 'year') {
-                    self::$baseWhere = self::$baseWhereNoYear;
-                }
                 $requestData[$new_key] = $value;
             }
             //数据部表无业务字段
