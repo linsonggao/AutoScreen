@@ -21,6 +21,9 @@ trait BaseList
          */
         $cacheKey = 'list' . json_encode(request()->all());
         $cardScreenArr = []; //身份证数组
+
+        $noCsItems = self::$loseBaseColumnCsItems;
+
         if (Cache::has($cacheKey) && env('APP_ENV') !== 'local') {
             $listJson = Cache::get($cacheKey);
             $list = json_decode($listJson, true);
@@ -33,7 +36,6 @@ trait BaseList
             $requestAll = request()->all();
             foreach ($requestAll as $key => $value) {
                 //如果不是业务模型需要转换
-                $noCsItems = self::$loseBaseColumnCsItems;
                 if (!in_array($method, $noCsItems)) {
                     $new_key =
                       match ($key) {
@@ -49,6 +51,8 @@ trait BaseList
                           'town_code'    => self::$baseColumnCs['town_code'],
                           default        => $key,
                       };
+                } else {
+                    $new_key = $key;
                 }
                 //附加项目转换
                 $allItemKeys = $this->{$method};
@@ -58,14 +62,16 @@ trait BaseList
                 $requestData[$new_key] = $value;
             }
             //数据部表无业务字段
-            foreach (self::$bussinessColumn as $value) {
-                if (isset($requestAll[$value])) {
-                    $patientsAll = $model->makeList(requestData: ['page' => 1, 'per_page' => 99999999, ...$requestAll]);
-                    $allListArr = $patientsAll['list']->toArray();
-                    $inAllCardNo = array_column($allListArr, 'card_no');
-                    $cardScreenArr = array_column($allListArr, null, 'card_no');
-                    $requestData['id_crd_no'] = [1, ...$inAllCardNo];
-                    break;
+            if (!in_array($method, $noCsItems)) {
+                foreach (self::$bussinessColumn as $value) {
+                    if (isset($requestAll[$value])) {
+                        $patientsAll = $model->makeList(requestData: ['page' => 1, 'per_page' => 99999999, ...$requestAll]);
+                        $allListArr = $patientsAll['list']->toArray();
+                        $inAllCardNo = array_column($allListArr, 'card_no');
+                        $cardScreenArr = array_column($allListArr, null, 'card_no');
+                        $requestData['id_crd_no'] = [1, ...$inAllCardNo];
+                        break;
+                    }
                 }
             }
             //此处是为了兼容不写year条件报错的bug
@@ -86,15 +92,17 @@ trait BaseList
             $cardScreenArr = array_column($arrData, null, 'card_no');
         }
         //取交集
-        foreach ($list['list'] as $key => $value) {
-            foreach (self::$bussinessColumn as $k => $column) {
-                if (in_array($column, $this->{$method})) {
-                    if (isset($cardScreenArr[$value['id_crd_no']][$column]) || is_null($cardScreenArr[$value['id_crd_no']][$column])) {
-                        $list['list'][$key][$column] = $cardScreenArr[$value['id_crd_no']][$column];
+        if (!in_array($method, $noCsItems)) {
+            foreach ($list['list'] as $key => $value) {
+                foreach (self::$bussinessColumn as $k => $column) {
+                    if (in_array($column, $this->{$method})) {
+                        if (isset($cardScreenArr[$value['id_crd_no']][$column]) || is_null($cardScreenArr[$value['id_crd_no']][$column])) {
+                            $list['list'][$key][$column] = $cardScreenArr[$value['id_crd_no']][$column];
+                        }
                     }
                 }
+                $list['list'][$key]['user_id'] = $cardScreenArr[$value['id_crd_no']]['id'] ?? $list['list'][$key]['user_id'];
             }
-            $list['list'][$key]['user_id'] = $cardScreenArr[$value['id_crd_no']]['id'] ?? $list['list'][$key]['user_id'];
         }
         $res = $this->appendItems($list);
 
