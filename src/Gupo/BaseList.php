@@ -32,20 +32,24 @@ trait BaseList
             $requestData['year'] = '全部';
             $requestAll = request()->all();
             foreach ($requestAll as $key => $value) {
-                $new_key =
-                  match ($key) {
-                      'id'           => self::$baseColumnCs['id'],
-                      'name'         => self::$baseColumnCs['name'],
-                      'gender'       => self::$baseColumnCs['gender'],
-                      'mobile'       => self::$baseColumnCs['mobile'],
-                      'card_no'      => self::$baseColumnCs['card_no'],
-                      'address'      => self::$baseColumnCs['address'],
-                      'village_name' => self::$baseColumnCs['village_name'],
-                      'village_code' => self::$baseColumnCs['village_code'],
-                      'town_name'    => self::$baseColumnCs['town_name'],
-                      'town_code'    => self::$baseColumnCs['town_code'],
-                      default        => $key,
-                  };
+                //如果不是业务模型需要转换
+                $noCsItems = self::$loseBaseColumnCsItems;
+                if (!in_array($method, $noCsItems)) {
+                    $new_key =
+                      match ($key) {
+                          'id'           => self::$baseColumnCs['id'],
+                          'name'         => self::$baseColumnCs['name'],
+                          'gender'       => self::$baseColumnCs['gender'],
+                          'mobile'       => self::$baseColumnCs['mobile'],
+                          'card_no'      => self::$baseColumnCs['card_no'],
+                          'address'      => self::$baseColumnCs['address'],
+                          'village_name' => self::$baseColumnCs['village_name'],
+                          'village_code' => self::$baseColumnCs['village_code'],
+                          'town_name'    => self::$baseColumnCs['town_name'],
+                          'town_code'    => self::$baseColumnCs['town_code'],
+                          default        => $key,
+                      };
+                }
                 //附加项目转换
                 $allItemKeys = $this->{$method};
                 if (isset($allItemKeys[$new_key])) {
