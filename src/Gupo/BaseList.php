@@ -36,6 +36,7 @@ trait BaseList
             $requestAll = request()->all();
             foreach ($requestAll as $key => $value) {
                 //如果不是业务模型需要转换
+
                 if (!in_array($method, $noCsItems)) {
                     $new_key =
                       match ($key) {
@@ -129,7 +130,7 @@ trait BaseList
         }
         //基础表基础字段还是关联表的基础字段
         $noCsItems = self::$loseBaseColumnCsItems;
-        if (!in_array($appendItem, $noCsItems)) {
+        if (in_array($appendItem, $noCsItems)) {
             return array_merge(self::$loseCsBaseSelect, $addSelect);
         } else {
             return array_merge(self::$baseSelect, $addSelect);
