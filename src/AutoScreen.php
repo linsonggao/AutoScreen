@@ -215,9 +215,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                 ) { //如果是字符串并且默认为like
                     $searchValue = str_replace('%', "\%", $searchValue);
                     $q->where($searchKey, 'like', '%' . $searchValue . '%');
-                } elseif (($type == 'boolean' || $type == 'integer') && is_numeric($searchValue)) { //如果是int值则直接等于
+                } elseif (($type == 'boolean' || $type == 'integer' || $type == 'bigint') && is_numeric($searchValue)) { //如果是int值则直接等于
                     $q->where($searchKey, $searchValue);
-                } elseif ($type == 'integer' && is_string($searchValue)) {
+                } elseif (($type == 'integer' || $type == 'bigint') && is_string($searchValue)) {
                     $between_str = 'automake.' . $this->table . '_between_arr';
                     $between_arr = config($between_str) ?? '';
                     if (is_array($between_arr) && in_array($searchKey, $between_arr)) {
