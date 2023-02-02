@@ -60,6 +60,15 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
             Cache::put('columnList' . $this->table, json_encode($columnList), $cacheTime);
         }
         $searchArr = $this->requestData ?: request()->all();
+        $noRequestStr = 'automake.' . $this->table . '_no_request_default';
+        $noRequestDefault = config($noRequestStr);
+        if ($noRequestDefault) {
+            foreach ($noRequestDefault as $key => $value) {
+                if (!isset($searchArr)) {
+                    $q->where($key, $value);
+                }
+            }
+        }
         foreach ($searchArr as $searchKey => $searchValue) {
             //不进行筛选的数组
             if ($this->loseWhere) {
