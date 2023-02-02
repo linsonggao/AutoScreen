@@ -97,12 +97,16 @@ trait BaseList
             foreach ($list['list'] as $key => $value) {
                 foreach (self::$bussinessColumn as $k => $column) {
                     if (in_array($column, $this->{$method})) {
-                        if (isset($cardScreenArr[$value['id_crd_no']][$column]) || is_null($cardScreenArr[$value['id_crd_no']][$column])) {
-                            $list['list'][$key][$column] = $cardScreenArr[$value['id_crd_no']][$column];
+                        if (isset($cardScreenArr[$value['id_crd_no']])) {
+                            if (isset($cardScreenArr[$value['id_crd_no']][$column]) || is_null($cardScreenArr[$value['id_crd_no']][$column])) {
+                                $list['list'][$key][$column] = $cardScreenArr[$value['id_crd_no']][$column];
+                            }
                         }
                     }
                 }
-                $list['list'][$key]['user_id'] = $cardScreenArr[$value['id_crd_no']]['id'] ?? $list['list'][$key]['user_id'];
+                if (isset($cardScreenArr[$value['id_crd_no']])) {
+                    $list['list'][$key]['user_id'] = $cardScreenArr[$value['id_crd_no']]['id'] ?? $list['list'][$key]['user_id'];
+                }
             }
         }
         $res = $this->appendItems($list);
