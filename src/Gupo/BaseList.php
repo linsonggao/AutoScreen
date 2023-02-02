@@ -165,9 +165,11 @@ trait BaseList
         }
         foreach ($listArr as $key => $item) {
             foreach ($itemMap as $k => $mapValue) {
-                if (isset($item[$mapValue]) || is_null($item[$mapValue])) {
+                if (isset($item[$mapValue])) {
                     $listArr[$key]['items'][$k] = $listArr[$key][$mapValue];
                     continue;
+                } else {//未同步的数据、或者为null的数据、或者不存在的字段
+                    $listArr[$key]['items'][$k] = null;
                 }
             }
         }
