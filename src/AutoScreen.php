@@ -64,7 +64,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
         $noRequestDefault = config($noRequestStr);
         if ($noRequestDefault) {
             foreach ($noRequestDefault as $key => $value) {
-                if (!isset($searchArr)) {
+                if (!isset($searchArr[$key])) {
                     $q->where($key, $value);
                 }
             }
