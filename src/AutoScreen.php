@@ -78,7 +78,12 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
             }
             //默认值
             $searchValue = $searchArr[$searchKey] ?? $default; //request()->input($searchKey, $default);
-
+            if (!$searchValue) {
+                continue;
+            }
+            if ($searchValue == $default) {
+                continue;
+            }
             //优先判断二维数组，多条件
             if (is_array($searchValue) && count($searchValue) != count($searchValue, 1)) {
                 $multi_str = 'automake.' . $this->table . '_in_multi';
@@ -152,6 +157,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                     function ($query) use ($searchKey, $searchValue, $columnList, $table, $schema) {
                         $search_values = config('automake.search_value');
                         foreach ($search_values as $k => $config_search_name) {
+                            if (!$searchValue) {
+                                continue;
+                            }
                             if (in_array($config_search_name, $columnList)) {
                                 $type = $schema->getColumnType($table, $config_search_name);
                                 if ($type == 'string' && !in_array($searchKey, config('automake.string_equal'))) {
