@@ -32,26 +32,13 @@ trait BaseList
              * 修改入参
              */
             $requestData = [];
-            $requestData['year'] = '全部';
             $requestAll = request()->all();
             foreach ($requestAll as $key => $value) {
                 //如果不是业务模型需要转换
-
                 if (!in_array($method, $noCsItems)) {
-                    $new_key =
-                      match ($key) {
-                          'id'           => self::$baseColumnCs['id'],
-                          'name'         => self::$baseColumnCs['name'],
-                          'gender'       => self::$baseColumnCs['gender'],
-                          'mobile'       => self::$baseColumnCs['mobile'],
-                          'card_no'      => self::$baseColumnCs['card_no'],
-                          'address'      => self::$baseColumnCs['address'],
-                          'village_name' => self::$baseColumnCs['village_name'],
-                          'village_code' => self::$baseColumnCs['village_code'],
-                          'town_name'    => self::$baseColumnCs['town_name'],
-                          'town_code'    => self::$baseColumnCs['town_code'],
-                          default        => $key,
-                      };
+                    if (isset(self::$baseColumnCs[$key])) {
+                        $new_key = self::$baseColumnCs[$key] ?? $key;
+                    }
                 } else {
                     $new_key = $key;
                 }
@@ -74,10 +61,6 @@ trait BaseList
                         break;
                     }
                 }
-            }
-            //此处是为了兼容不写year条件报错的bug
-            if ($requestData['year']) {
-                unset(self::$baseWhere['year']);
             }
 
             $list = $this->tableList($method, $requestData);
