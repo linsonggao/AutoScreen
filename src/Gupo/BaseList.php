@@ -76,7 +76,7 @@ trait BaseList
             $listArr = json_decode(json_encode($list['list']), true);
             $inCrdArr = array_column($listArr, 'id_crd_no');
             $baseBussinessSelect = array_values(array_intersect($this->{$method}, self::$bussinessColumn));
-            $arrData = $model->select(['id', 'card_no', ...$baseBussinessSelect])->whereIn('card_no', $inCrdArr)->get()->toArray();
+            $arrData = $model->select(['id', 'card_no', ...$baseBussinessSelect])->where('year', '全部')->whereIn('card_no', $inCrdArr)->get()->toArray();
             $cardScreenArr = array_column($arrData, null, 'card_no');
         }
         //取交集
