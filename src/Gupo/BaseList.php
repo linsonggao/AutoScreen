@@ -23,8 +23,8 @@ trait BaseList
         $cardScreenArr = []; //身份证数组
 
         $noCsItems = self::$loseBaseColumnCsItems;
-
-        if (Cache::has($cacheKey) && env('APP_ENV') !== 'local') {
+        $businessArrs = array_intersect(array_keys(request()->all()), self::$bussinessColumn); //是否存在业务字段需要查询
+        if (Cache::has($cacheKey) && env('APP_ENV') !== 'local' && !$businessArrs) {
             $listJson = Cache::get($cacheKey);
             $list = json_decode($listJson, true);
         } else {
@@ -52,6 +52,7 @@ trait BaseList
                 $requestData[$new_key] = $value;
             }
             //数据部表无业务字段
+            //搜索业务字段的情况下，过滤业务字段的人群
             if (!in_array($method, $noCsItems)) {
                 foreach (self::$bussinessColumn as $value) {
                     if (isset($requestAll[$value])) {
@@ -70,6 +71,7 @@ trait BaseList
             Cache::put($cacheKey, json_encode($list), self::$cacheExpire);
         }
         //新增业务数据字段
+        //未搜索业务字段的情况下，增加业务字段
         if (!$cardScreenArr) {
             $listArr = json_decode(json_encode($list['list']), true);
             $inCrdArr = array_column($listArr, 'id_crd_no');
