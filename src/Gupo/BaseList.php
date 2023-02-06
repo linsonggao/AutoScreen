@@ -38,6 +38,8 @@ trait BaseList
                 if (!in_array($method, $noCsItems)) {
                     if (isset(self::$baseColumnCs[$key])) {
                         $new_key = self::$baseColumnCs[$key] ?? $key;
+                    } else {
+                        $new_key = $key;
                     }
                 } else {
                     $new_key = $key;
