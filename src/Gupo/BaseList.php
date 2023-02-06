@@ -23,8 +23,8 @@ trait BaseList
         $cardScreenArr = []; //身份证数组
 
         $noCsItems = self::$loseBaseColumnCsItems;
-        $businessArrs = array_intersect(array_keys(request()->all()), self::$bussinessColumn); //是否存在业务字段需要查询
-        if (Cache::has($cacheKey) && env('APP_ENV') !== 'local' && !$businessArrs) {
+        // $businessArrs = array_intersect(array_keys(request()->all()), self::$bussinessColumn); //是否存在业务字段需要查询
+        if (Cache::has($cacheKey) && env('APP_ENV') !== 'local') {
             $listJson = Cache::get($cacheKey);
             $list = json_decode($listJson, true);
         } else {
