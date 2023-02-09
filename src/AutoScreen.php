@@ -153,6 +153,22 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
             }
             //多条件模糊匹配,name or mobile
             if (in_array($searchKey, $configSearchKeys)) {
+                if ($joinTable = config('automake.like_join_table')) {
+                    if (Schema::hasTable($joinTable[0])) {
+                        $q->leftJoin($joinTable[0], $joinTable[0] . '.' . $joinTable[1], $table . '.' . $joinTable[2])->where(
+                            function ($query) use ($searchValue, $joinTable) {
+                                $search_values = config('automake.search_value');
+                                foreach ($search_values as $k => $config_search_name) {
+                                    if (!$searchValue) {
+                                        continue;
+                                    }
+                                    $query->orWhere($joinTable[0] . '.' . $config_search_name, 'like', '%' . $searchValue . '%');
+                                }
+                            }
+                        );
+                    }
+                    continue;
+                }
                 $q->where(
                     function ($query) use ($searchKey, $searchValue, $columnList, $table, $schema) {
                         $search_values = config('automake.search_value');
@@ -171,6 +187,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                         }
                     }
                 );
+                continue;
             }
             //时间与字符串like
 
@@ -325,7 +342,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                 $q->orderBy($column[0], $column[1]);
             }
         } else {
-            $q->orderBy($orderBy, 'desc');
+            $q->orderBy($this->table . '.' . $orderBy, 'desc');
         }
         $searchArr = $this->requestData ?: request()->all();
         $page = $searchArr['page'] ?? 1;
