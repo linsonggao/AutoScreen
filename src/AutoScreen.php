@@ -155,17 +155,28 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
             if (in_array($searchKey, $configSearchKeys)) {
                 if ($joinTable = config('automake.like_join_table')) {
                     if (Schema::hasTable($joinTable[0])) {
-                        $q->leftJoin($joinTable[0], $joinTable[0] . '.' . $joinTable[1], $table . '.' . $joinTable[2])->where(
-                            function ($query) use ($searchValue, $joinTable) {
-                                $search_values = config('automake.search_value');
-                                foreach ($search_values as $k => $config_search_name) {
-                                    if (!$searchValue) {
-                                        continue;
-                                    }
-                                    $query->orWhere($joinTable[0] . '.' . $config_search_name, 'like', '%' . $searchValue . '%');
-                                }
+                        //关联太慢，改成子查询
+                        // $q->leftJoin($joinTable[0], $joinTable[0] . '.' . $joinTable[1], $table . '.' . $joinTable[2])->where(
+                        //     function ($query) use ($searchValue, $joinTable) {
+                        //         $search_values = config('automake.search_value');
+                        //         foreach ($search_values as $k => $config_search_name) {
+                        //             if (!$searchValue) {
+                        //                 continue;
+                        //             }
+                        //             $query->orWhere($joinTable[0] . '.' . $config_search_name, 'like', '%' . $searchValue . '%');
+                        //         }
+                        //     }
+                        // );
+                        $search_values = config('automake.search_value');
+                        $joinQuery = DB::table($joinTable[0]);
+                        foreach ($search_values as $k => $config_search_name) {
+                            if (!$searchValue) {
+                                continue;
                             }
-                        );
+                            $joinQuery->orWhere($config_search_name, 'like', '%' . $searchValue . '%');
+                        }
+                        $inArrs = $joinQuery->pluck($joinTable[1]);
+                        $q->whereIn($joinTable[2], $inArrs);
                     }
                     continue;
                 }
