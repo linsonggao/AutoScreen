@@ -65,8 +65,13 @@ trait BaseList
                     }
                 }
             }
-
-            $list = $this->tableList($method, $requestData);
+            if (method_exists($this, '_list')) {
+                $list = $this->_list($method, $requestData);
+            } elseif (method_exists($this, '__list')) {
+                $list = $this->__list($method, $requestData);
+            } elseif (method_exists($this, 'tableList')) {
+                $list = $this->tableList($method, $requestData);
+            }
             // 缓存用户数据
             Cache::put($cacheKey, json_encode($list), self::$cacheExpire);
         }
