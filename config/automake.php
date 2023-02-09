@@ -10,7 +10,7 @@ return [
     //表多个模糊匹配字段配置,表字段
     'search_value'                                        => ['name', 'mobile'],
     //模糊查询需要关联的表
-    'like_join_table'                                     => ['card_name_mobile', 'card_no', 'card_no'],
+    'like_join_table'                                     => ['card_name_mobiles', 'card_no', 'card_no'],
     //字段说明枚举.需要不同的表字段独立
     'intestine_patients_enums_arr'                        => [
         'is_sign'                  => [0 => '未签约', 1 => '已签约'],
