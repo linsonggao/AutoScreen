@@ -78,7 +78,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
             }
             //默认值
             $searchValue = $searchArr[$searchKey] ?? $default; //request()->input($searchKey, $default);
-            if (!$searchValue) {
+            if (!$searchValue && $searchValue !== 0 && $searchValue !== '0') {
                 continue;
             }
             if ($searchValue == $default) {
