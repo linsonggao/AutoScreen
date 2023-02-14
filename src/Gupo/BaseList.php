@@ -53,6 +53,7 @@ trait BaseList
             }
             //数据部表无业务字段
             //搜索业务字段的情况下，过滤业务字段的人群
+            //此处如果搜索数据太多whereIn会溢出,需要改回业务表
             if (!in_array($method, $noCsItems)) {
                 foreach (self::$bussinessColumn as $value) {
                     if (isset($requestAll[$value])) {
