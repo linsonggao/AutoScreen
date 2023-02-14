@@ -56,6 +56,8 @@ trait BaseList
             if (!in_array($method, $noCsItems)) {
                 foreach (self::$bussinessColumn as $value) {
                     if (isset($requestAll[$value])) {
+                        unset($requestAll['page']);
+                        unset($requestAll['per_page']);
                         $patientsAll = $model->makeList(requestData: ['page' => 1, 'per_page' => 99999999, ...$requestAll]);
                         $allListArr = $patientsAll['list']->toArray();
                         $inAllCardNo = array_column($allListArr, 'card_no');
