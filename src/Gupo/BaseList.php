@@ -53,13 +53,11 @@ trait BaseList
             }
             //数据部表无业务字段
             //搜索业务字段的情况下，过滤业务字段的人群
-            //此处如果搜索数据太多whereIn会溢出,需要改回业务表
+            //需要和关联表数据筛选条件一致要不然查询不准,此处要注意字段同步
             if (!in_array($method, $noCsItems)) {
                 foreach (self::$bussinessColumn as $value) {
                     if (isset($requestAll[$value])) {
-                        unset($requestAll['page']);
-                        unset($requestAll['per_page']);
-                        $patientsAll = $model->makeList(requestData: ['page' => 1, 'per_page' => 99999999, ...$requestAll]);
+                        $patientsAll = $model->makeList(requestData: $requestAll);
                         $allListArr = $patientsAll['list']->toArray();
                         $inAllCardNo = array_column($allListArr, 'card_no');
                         $cardScreenArr = array_column($allListArr, null, 'card_no');
