@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Cache;
 trait BaseList
 {
     /**
-     * 自动化列表
-     * @param mixed $method
+     * aop,做了些select基础规则、入参转换、以及关联，目前只支持身份证号,关联
+     * @param string $method
      */
     public function list($method)
     {
