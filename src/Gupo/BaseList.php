@@ -16,6 +16,7 @@ trait BaseList
     public function list($method)
     {
         $model = new self::$bussinessModel;
+        $businessTotal = 0;
         /**
          * 缓存
          */
@@ -59,6 +60,7 @@ trait BaseList
                     if (isset($requestAll[$value])) {
                         $patientsAll = $model->makeList(screen: [self::$itemDoEqual[$method] => 1], requestData: $requestAll);
                         $allListArr = $patientsAll['list']->toArray();
+                        $businessTotal = $patientsAll['paginate']['total'];
                         $inAllCardNo = array_column($allListArr, 'card_no');
                         $cardScreenArr = array_column($allListArr, null, 'card_no');
                         $requestData['id_crd_no'] = [1, ...$inAllCardNo];
@@ -102,6 +104,7 @@ trait BaseList
                 }
             }
         }
+        $list['paginate']['total'] = $businessTotal ?: $list['paginate']['total'];
         $res = $this->appendItems($list);
 
         return $res;
