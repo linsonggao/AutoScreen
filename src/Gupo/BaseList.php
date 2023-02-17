@@ -57,7 +57,7 @@ trait BaseList
             if (!in_array($method, $noCsItems)) {
                 foreach (self::$bussinessColumn as $value) {
                     if (isset($requestAll[$value])) {
-                        $patientsAll = $model->makeList(requestData: $requestAll);
+                        $patientsAll = $model->makeList(screen: [self::$itemDoEqual[$method] => 1], requestData: $requestAll);
                         $allListArr = $patientsAll['list']->toArray();
                         $inAllCardNo = array_column($allListArr, 'card_no');
                         $cardScreenArr = array_column($allListArr, null, 'card_no');
