@@ -4,6 +4,7 @@ namespace Lsg\AutoScreen;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\ServiceProvider;
+use Lsg\AutoScreen\Support\CustomPaginator;
 
 class AutoScreenServiceProvider extends ServiceProvider
 {
@@ -70,6 +71,9 @@ class AutoScreenServiceProvider extends ServiceProvider
             } else {
                 return AutoMake::getQuery($this);
             }
+        });
+        Builder::macro('customPage', function (...$item) {
+            return new CustomPaginator($this->paginate(...$item));
         });
     }
 
