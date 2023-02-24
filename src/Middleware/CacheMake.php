@@ -14,11 +14,13 @@ class CacheMake
      * @param \Illuminate\Http\Request $request
      * @param \Closure $next
      * @param null|mixed $minutes
+     * @param null|mixed $cacheKey
+     * @param null|mixed $cacheMoreKey
      * @return mixed
      */
-    public function handle($request, Closure $next, $minutes = 0)
+    public function handle($request, Closure $next, $minutes = 0, $cacheMoreKey = null)
     {
-        $cacheKey = Route::currentRouteAction() . json_encode(request()->all());
+        $cacheKey = $cacheMoreKey . Route::currentRouteAction() . json_encode(request()->all());
         if (Cache::has($cacheKey) && env('APP_ENV') !== 'local') {
             $data = Cache::get($cacheKey);
 
