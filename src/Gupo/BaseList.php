@@ -165,7 +165,7 @@ trait BaseList
                     $listArr[$key]['items'][$k] = $listArr[$key][$mapValue];
                     continue;
                 } else {//未同步的数据、或者为null的数据、或者不存在的字段
-                    $listArr[$key]['items'][$k] = null;
+                    $listArr[$key]['items'][$k] = $mapValue;
                 }
             }
         }
