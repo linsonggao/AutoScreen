@@ -123,6 +123,11 @@ trait BaseList
         if ($key = array_search('oprt_info_url', $addSelect)) {
             unset($addSelect[$key]);
         }
+        foreach ($addSelect as $key => $value) {
+            if (mb_strpos($value, 'raw:') !== false) {
+                unset($addSelect[$key]);
+            }
+        }
         foreach (self::$bussinessColumn as $value) {
             if ($key = array_search($value, $addSelect)) {
                 unset($addSelect[$key]);
@@ -161,12 +166,16 @@ trait BaseList
         }
         foreach ($listArr as $key => $item) {
             foreach ($itemMap as $k => $mapValue) {
-                if (isset($item[$mapValue])) {
+                if (isset($item[$mapValue])) {//如果数据库字段与map对应
                     $listArr[$key]['items'][$k] = $listArr[$key][$mapValue];
                     continue;
                 } else {//未同步的数据、或者为null的数据、或者不存在的字段
-                    if (mb_strpos($mapValue, 'raw:') !== false) {
-                        $listArr[$key]['items'][$k] = explode(':', $mapValue)[1];
+                    if (mb_strpos($mapValue, 'raw:') !== false) {//处理需要原生值的值
+                        if (isset($item[$k]) && mb_strpos($item[$k], 'raw:') !== false) {//处理模型访问器的值
+                            $listArr[$key]['items'][$k] = explode(':', $item[$k])[1];
+                        } else {//处理需要原生值的值
+                            $listArr[$key]['items'][$k] = explode(':', $mapValue)[1];
+                        }
                     } else {
                         $listArr[$key]['items'][$k] = null;
                     }
