@@ -171,9 +171,19 @@ trait BaseList
                 } else {//未同步的数据、或者为null的数据、或者不存在的字段
                     if (mb_strpos($mapValue, 'raw:') !== false) {//处理需要原生值的值
                         if (isset($item[$k]) && mb_strpos($item[$k], 'raw:') !== false) {//处理模型访问器的值
-                            $listArr[$key]['items'][$k] = explode('raw:', $item[$k])[1];
+                            $rawValue = explode('raw:', $item[$k])[1];
+                            if (is_array(json_decode($rawValue, true))) {
+                                $listArr[$key]['items'][$k] = json_decode($rawValue, true);
+                            } else {
+                                $listArr[$key]['items'][$k] = $rawValue;
+                            }
                         } else {//处理需要原生值的值
-                            $listArr[$key]['items'][$k] = explode('raw:', $mapValue)[1];
+                            $rawValue = explode('raw:', $mapValue)[1];
+                            if (is_array(json_decode($rawValue, true))) {
+                                $listArr[$key]['items'][$k] = json_decode($rawValue, true);
+                            } else {
+                                $listArr[$key]['items'][$k] = $rawValue;
+                            }
                         }
                     } else {
                         $listArr[$key]['items'][$k] = null;
