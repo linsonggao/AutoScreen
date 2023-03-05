@@ -99,7 +99,7 @@ trait BaseList
                         }
                     }
                 }
-                if (isset($cardScreenArr[$value['id_crd_no']])) {
+                if (isset($value['id_crd_no']) && isset($cardScreenArr[$value['id_crd_no']])) {
                     $list['list'][$key]['user_id'] = $cardScreenArr[$value['id_crd_no']]['id'] ?? $list['list'][$key]['user_id'];
                 }
             }
