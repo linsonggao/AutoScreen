@@ -488,4 +488,27 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 
         return true;
     }
+
+    /**
+     * 自动创建，传什么字段新增什么字段
+     */
+    public function doAutoCreate()
+    {
+        $requestAll = request()->all();
+        $createData = [];
+        if ($this->query instanceof Builder) {
+            $this->table = $table = $this->query->from;
+            $q = ($this->query);
+        } else {
+            $this->table = $table = ($this->query)->getTable();
+            $q = ($this->query)->query();
+        }
+        $columnList = Schema::getColumnListing($table);
+        foreach ($requestAll as $createKey => $createValue) {
+            if (in_array($createKey, $columnList)) {
+                $createData[$createKey] = $createData[$createValue];
+            }
+        }
+        $q->create($createData);
+    }
 }
