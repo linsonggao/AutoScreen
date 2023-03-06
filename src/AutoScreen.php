@@ -491,8 +491,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 
     /**
      * 自动创建，传什么字段新增什么字段
+     * @param mixed $createMore
      */
-    public function doAutoCreate()
+    public function doAutoCreate($createMore = [])
     {
         $requestAll = request()->all();
         $createData = [];
@@ -506,9 +507,10 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
         $columnList = Schema::getColumnListing($table);
         foreach ($requestAll as $createKey => $createValue) {
             if (in_array($createKey, $columnList)) {
-                $createData[$createKey] = $createData[$createValue];
+                $createData[$createKey] = $createValue;
             }
         }
-        $q->create($createData);
+
+        return $q->create(array_merge($createData, $createMore));
     }
 }
