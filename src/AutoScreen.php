@@ -359,7 +359,8 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
         $page = $searchArr['page'] ?? 1;
         $per_page = $searchArr['per_page'] ?? 15;
         if ($pageCustom) {
-            $list = $q->customPage($per_page, $page)->toArray();
+            //perPage: $perPage, page: $page
+            $list = $q->customPage($per_page, ['*'], 'page', $page)->toArray();
         //$list = $q->customPaginate(true, $per_page, $page)->toArray();
         } else {
             $list = $q->paginate($per_page, ['*'], 'page', $page)->toArray();
@@ -513,4 +514,5 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 
         return $q->create(array_merge($createData, $createMore));
     }
+
 }
