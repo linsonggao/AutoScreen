@@ -519,8 +519,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
     /**
      * 自动验证，传什么字段验证什么字段
      * @param mixed $validateFunction
+     * @param mixed $errCode
      */
-    public function makeValidate($validateFunction = false)
+    public function makeValidate($validateFunction = false, $errCode = 412)
     {
         $tbArr = explode('.', $this->query->from);
         $requestAll = request()->all();
@@ -567,7 +568,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                                 $message = explode('require_message:', $column_comment);
                                 $msg = trim(trim($message[1], '|'), ',');
                                 //dd($msg);
-                                throw new ApiException(412, $msg);
+                                throw new ApiException($errCode, $msg);
                             }
                         }
                     }
