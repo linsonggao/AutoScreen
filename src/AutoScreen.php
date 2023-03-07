@@ -7,6 +7,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Lsg\AutoScreen\Support\ApiException;
 
 class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 {
@@ -515,4 +516,63 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
         return $q->create(array_merge($createData, $createMore));
     }
 
+    /**
+     * 自动验证，传什么字段验证什么字段
+     * @param mixed $validateFunction
+     */
+    public function makeValidate($validateFunction = false)
+    {
+        $tbArr = explode('.', $this->query->from);
+        $requestAll = request()->all();
+
+        if (count($tbArr) == 2) {
+            $this->table = $table = $tbArr[1];
+            $schema = Schema::connection(mb_strtolower($tbArr[0]) . '_mysql', $tbArr[0]);
+            $dbConnect = DB::connection(mb_strtolower($tbArr[0]) . '_mysql');
+        } else {
+            $this->table = $table = $this->query->from;
+            $dbConnect = DB::connection('mysql');
+        }
+
+        $columnList = Schema::getColumnListing($table);
+        foreach ($columnList as $key => $COLUMN_NAME) {
+            $res = $dbConnect
+                ->select('
+        select  COLUMN_NAME,
+        column_comment,
+        column_type,
+        column_key from information_schema.columns
+        where table_schema = "' . $dbConnect->getDatabaseName() . '"
+        and table_name = "' . $table . '" 
+        and COLUMN_NAME = "' . $COLUMN_NAME . '"
+        ');
+            $column_comment = $res[0]->COLUMN_COMMENT;
+            if ($validateFunction && mb_strpos($column_comment, $validateFunction) !== false) {
+                // dump($COLUMN_NAME);
+                // dump(explode('|', $column_comment));
+                // dump($column_comment);
+                $validateStrArr = explode('|', $column_comment);
+                if (isset($validateStrArr[1])) {
+                    $validateStr = $validateStrArr[1];
+                    //dump(explode(',', $validateStr));
+                    $douFen = explode(',', $validateStr);
+                    foreach ($douFen as $key => $douFenValue) {
+                        $maoFen = explode(':', $douFenValue);
+                        if (isset($maoFen) && $maoFen[0] == $validateFunction) {
+                            //dump($maoFen[1]);
+                            if ($maoFen[1] == 'require') {
+                                if (isset($requestAll['name'])) {
+                                    continue;
+                                }
+                                $message = explode('require_message:', $column_comment);
+                                $msg = trim(trim($message[1], '|'), ',');
+                                //dd($msg);
+                                throw new ApiException(412, $msg);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

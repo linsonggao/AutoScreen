@@ -91,6 +91,14 @@ class AutoScreenServiceProvider extends ServiceProvider
         Builder::macro('customPage', function (...$item) {
             return new CustomPaginator($this->paginate(...$item));
         });
+        //宏反向注册
+        Builder::macro('makeValidate', function (...$item) {
+            if ($item !== false) {
+                return AutoMake::getQuery($this)->makeValidate(...$item);
+            } else {
+                return AutoMake::getQuery($this);
+            }
+        });
     }
 
     /**
