@@ -153,7 +153,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                 continue;
             }
             //多条件模糊匹配,name or mobile
-            if (in_array($searchKey, $configSearchKeys)) {
+            if ($configSearchKeys && in_array($searchKey, $configSearchKeys)) {
                 if ($joinTable = config('automake.like_join_table')) {
                     if (Schema::hasTable($joinTable[0])) {
                         //关联太慢，改成子查询
