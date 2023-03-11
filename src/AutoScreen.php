@@ -39,7 +39,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
         }
         $q->select($this->select);
         $default = config('automake.default');
-        $configSearchKeys = config('automake.search_key');
+        $configSearchKeys = config('automake.search_key') ?? [];
         $columnList = [];
         if (Cache::has('columnList' . $this->table)) {
             $this->columnList = $columnList = json_decode(Cache::get('columnList' . $this->table), true);
@@ -242,7 +242,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                     continue;
                 }
                 $type = $schema->getColumnType($table, $searchKey);
-                if (in_array($searchKey, config('automake.string_equal'))) {
+                if (in_array($searchKey, config('automake.string_equal') ?? [])) {
                     $q->where($searchKey, $searchValue);
                     continue;
                 }
@@ -256,7 +256,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                 //时间筛选,时间格式并且是数组
                 if (is_array($searchValue) && ($type == 'datetime' || $type == 'date')) {
                     $q->where($searchKey, '>=', $searchValue[0] . ' 00:00:00')->where($searchKey, '<=', $searchValue[1] . ' 23:59:59');
-                } elseif (($type == 'string' || $type == 'text') && !in_array($searchKey, config('automake.string_equal')) &&
+                } elseif (($type == 'string' || $type == 'text') && !in_array($searchKey, config('automake.string_equal') ?? []) &&
                     !in_array($searchKey, $between_arr)
                 ) { //如果是字符串并且默认为like
                     $searchValue = str_replace('%', "\%", $searchValue);
