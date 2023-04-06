@@ -104,7 +104,7 @@ trait BaseList
                 }
             }
         }
-        $list['paginate']['total'] = $businessTotal ?: $list['paginate']['total'];
+        $list['paginate']['total'] = $businessTotal ?: $list['paginate']['total'] ?? 0;
         $res = $this->appendItems($list);
 
         return $res;
