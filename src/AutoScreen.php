@@ -205,7 +205,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 
             if (($searchValue || $searchValue == 0) && in_array($searchKey, $columnList) && $searchValue != $default && !in_array($searchKey, $configSearchKeys)) {
                 $between_str = 'automake.' . $this->table . '_between_arr';
-                $between_arr = config($between_str) ?? [];
+                $between_arr = config($between_str) ?? config('automake.all_between_arr') ?? [];
                 if (is_array($searchValue)) { //如果是数组的话需要分情况
                     //公司项目_tm结尾_at结尾_dt为时间
                     if (
@@ -265,7 +265,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                     $q->where($searchKey, $searchValue);
                 } elseif (($type == 'integer' || $type == 'bigint') && is_string($searchValue)) {
                     $between_str = 'automake.' . $this->table . '_between_arr';
-                    $between_arr = config($between_str) ?? '';
+                    $between_arr = config($between_str) ?? config('automake.all_between_arr') ?? [];
                     if (is_array($between_arr) && in_array($searchKey, $between_arr)) {
                         $arr = explode(',', $searchValue);
                         if ($arr) {
