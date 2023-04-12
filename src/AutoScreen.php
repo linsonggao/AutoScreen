@@ -88,7 +88,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
             //优先判断二维数组，多条件
             if (is_array($searchValue) && count($searchValue) != count($searchValue, 1)) {
                 $multi_str = 'automake.' . $this->table . '_in_multi';
-                $multi_arr = config($multi_str) ?? [];
+                $multi_arr = config($multi_str) ?? config('automake.all_in_multi') ?? [];
                 if (in_array($searchKey, $multi_arr)) {
                     //二维数组多重orwhere
                     $q->where(
@@ -123,7 +123,8 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
             //判断json数组,多条件age[] = [18,20]
             if (is_array($searchValue) && is_array(json_decode($searchValue[0]))) {
                 $multi_str = 'automake.' . $this->table . '_in_multi';
-                $multi_arr = config($multi_str) ?? [];
+                $multi_arr = config($multi_str) ?? config('automake.all_in_multi') ?? [];
+
                 if (in_array($searchKey, $multi_arr)) {
                     $q->where(
                         function ($query) use ($searchKey, $searchValue) {
