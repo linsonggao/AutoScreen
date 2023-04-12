@@ -264,8 +264,6 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                 } elseif (($type == 'boolean' || $type == 'integer' || $type == 'bigint') && is_numeric($searchValue)) { //如果是int值则直接等于
                     $q->where($searchKey, $searchValue);
                 } elseif (($type == 'integer' || $type == 'bigint') && is_string($searchValue)) {
-                    $between_str = 'automake.' . $this->table . '_between_arr';
-                    $between_arr = config($between_str) ?? config('automake.all_between_arr') ?? [];
                     if (is_array($between_arr) && in_array($searchKey, $between_arr)) {
                         $arr = explode(',', $searchValue);
                         if ($arr) {
