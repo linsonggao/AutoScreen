@@ -109,7 +109,8 @@ class AutoScreenServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../config/automake.php' => config_path('automake.php'), // 发布配置文件到 laravel 的config 下
+            __DIR__ . '/../config/automake.php'     => config_path('automake.php'), // 发布配置文件到 laravel 的config 下
+            __DIR__ . '/../config/makeValidate.php' => config_path('automake.php'), // 发布配置文件到 laravel 的config 下
         ]);
     }
 
