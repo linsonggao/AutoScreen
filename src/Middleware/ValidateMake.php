@@ -5,7 +5,6 @@ namespace Lsg\AutoScreen\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
-use Lsg\AutoScreen\Support\GlobalParams;
 
 class ValidateMake
 {
@@ -24,15 +23,10 @@ class ValidateMake
         $nowActionKey = Route::currentRouteAction();
         if ($ruleConfig = Cache::get($nowActionKey . 'rule') && $attrConfig = Cache::get($nowActionKey . 'attr')) {
             $response = $next($request);
-            GlobalParams::setValidatorRule($ruleConfig);
-            GlobalParams::setValidatorAttr($attrConfig);
 
             return $response;
         }
         list($ruleConfig, $attrConfig) = $this->makeValidateCache($nowActionKey);
-        GlobalParams::setValidatorRule($ruleConfig);
-        GlobalParams::setValidatorAttr($attrConfig);
-
         $response = $next($request);
 
         return $response;

@@ -3,6 +3,8 @@
 namespace Lsg\AutoScreen\Support;
 
 use App\Http\Requests\Support\BaseRequest;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Route;
 
 class MakeValidateRequest extends BaseRequest
 {
@@ -13,7 +15,10 @@ class MakeValidateRequest extends BaseRequest
      */
     public function rules()
     {
-        return GlobalParams::getValidatorRule();
+        $nowActionKey = Route::currentRouteAction();
+        $ruleConfig = Cache::get($nowActionKey . 'rule');
+
+        return $ruleConfig;
     }
 
     /**
@@ -23,6 +28,9 @@ class MakeValidateRequest extends BaseRequest
      */
     public function attributes()
     {
-        return GlobalParams::getValidatorAttr();
+        $nowActionKey = Route::currentRouteAction();
+        $attrConfig = Cache::get($nowActionKey . 'attr');
+
+        return $attrConfig;
     }
 }
