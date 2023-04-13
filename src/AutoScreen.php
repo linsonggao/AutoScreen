@@ -85,7 +85,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
             if ($searchValue == $default) {
                 continue;
             }
-            //优先判断二维数组，多条件
+            //优先判断二维数组,json，多条件
             if (is_array($searchValue) && count($searchValue) != count($searchValue, 1)) {
                 $multi_str = 'automake.' . $this->table . '_in_multi';
                 $multi_arr = config($multi_str) ?? config('automake.all_in_multi') ?? [];
@@ -118,6 +118,28 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                     );
                 }
 
+                continue;
+            }
+            //优先判断多态,兼容age[]=1,100这种多选条件
+            $multi_str = 'automake.' . $this->table . '_in_multi';
+            $multi_arr = config($multi_str) ?? config('automake.all_in_multi') ?? [];
+            if (in_array($searchKey, $multi_arr)) {
+                $q->where(function ($q) use ($searchKey, $searchValue) {
+                    foreach ($searchValue as $value) {
+                        if (mb_strpos($value, ',') !== false) {
+                            $value = explode(',', $value);
+                            if (count($value) > 1) {
+                                $q->orWhere(function ($query) use ($value, $searchKey) {
+                                    $query->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
+                                });
+                            } else {
+                                $q->orWhere(function ($query) use ($value, $searchKey) {
+                                    $query->where($searchKey, '>=', $value[0]);
+                                });
+                            }
+                        }
+                    }
+                });
                 continue;
             }
             //判断json数组,多条件age[] = [18,20]
