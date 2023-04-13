@@ -16,7 +16,7 @@ class MakeValidateRequest extends BaseRequest
     public function rules()
     {
         $nowActionKey = Route::currentRouteAction();
-        $ruleConfig = Cache::get($nowActionKey . 'rule');
+        $ruleConfig = Cache::get($nowActionKey . 'rule') ?? [];
 
         return $ruleConfig;
     }
@@ -29,7 +29,7 @@ class MakeValidateRequest extends BaseRequest
     public function attributes()
     {
         $nowActionKey = Route::currentRouteAction();
-        $attrConfig = Cache::get($nowActionKey . 'attr');
+        $attrConfig = Cache::get($nowActionKey . 'attr') ?? [];
 
         return $attrConfig;
     }
