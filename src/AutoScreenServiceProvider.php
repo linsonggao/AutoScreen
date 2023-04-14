@@ -99,6 +99,8 @@ class AutoScreenServiceProvider extends ServiceProvider
                 return AutoMake::getQuery($this);
             }
         });
+
+        $this->commands([MakeValidateCommand::class]);
     }
 
     /**
