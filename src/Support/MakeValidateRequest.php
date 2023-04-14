@@ -2,11 +2,11 @@
 
 namespace Lsg\AutoScreen\Support;
 
-use App\Http\Requests\Support\BaseRequest;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
-class MakeValidateRequest extends BaseRequest
+class MakeValidateRequest extends FormRequest
 {
     /**
      * rules
