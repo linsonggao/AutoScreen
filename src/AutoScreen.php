@@ -125,17 +125,19 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
             $multi_arr = config($multi_str) ?? config('automake.all_in_multi') ?? [];
             if (in_array($searchKey, $multi_arr)) {
                 $q->where(function ($q) use ($searchKey, $searchValue) {
-                    foreach ($searchValue as $value) {
-                        if (mb_strpos($value, ',') !== false) {
-                            $value = explode(',', $value);
-                            if (count($value) > 1) {
-                                $q->orWhere(function ($query) use ($value, $searchKey) {
-                                    $query->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
-                                });
-                            } else {
-                                $q->orWhere(function ($query) use ($value, $searchKey) {
-                                    $query->where($searchKey, '>=', $value[0]);
-                                });
+                    if (is_array($searchValue)) {
+                        foreach ($searchValue as $value) {
+                            if (mb_strpos($value, ',') !== false) {
+                                $value = explode(',', $value);
+                                if (count($value) > 1) {
+                                    $q->orWhere(function ($query) use ($value, $searchKey) {
+                                        $query->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
+                                    });
+                                } else {
+                                    $q->orWhere(function ($query) use ($value, $searchKey) {
+                                        $query->where($searchKey, '>=', $value[0]);
+                                    });
+                                }
                             }
                         }
                     }
