@@ -29,6 +29,9 @@ dd($res);
 
 $res = Admin::autoUpdate(['status']);
 dd($res);
+
+//验证器用法
+use Lsg\AutoScreen\Support\MakeValidateRequest;
 ```
 ## 发行说明
 
