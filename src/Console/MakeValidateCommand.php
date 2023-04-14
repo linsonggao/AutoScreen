@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Lsg\AutoScreen\Console\Commands;
 
 use Illuminate\Console\Command;
 use Lsg\AutoScreen\Middleware\ValidateMake;
