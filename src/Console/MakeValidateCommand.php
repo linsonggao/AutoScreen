@@ -46,7 +46,9 @@ class MakeValidateCommand extends Command
         $config = config('makeValidate');
 
         foreach ($config as $key => $configKeys) {
-            $configKey[] = $configKeys[0][0];
+            foreach ($configKeys[0] as $key => $value) {
+                $configKey[] = $value;
+            }
         }
         $configKey = array_unique($configKey);
         // 准备进度条
@@ -57,7 +59,6 @@ class MakeValidateCommand extends Command
             ),
             fn (ProgressBar $bar) => $bar->start()
         );
-
         foreach ($configKey as $key => $nowActionKey) {
             (new ValidateMake())->makeValidateCache($nowActionKey);
             $bar->advance();
