@@ -8,17 +8,18 @@
 
 ```bash
 composer require lsg/auto-screen
-```
 
-
-## 使用说明
-```bash
 php artisan vendor:publish --provider="Lsg\AutoScreen\AutoScreenServiceProvider"
-使用方法
+
 config/app.php
 增加 
 //自动查询脚本
 Lsg\AutoScreen\AutoScreenServiceProvider::class
+```
+
+
+## 列表使用说明
+```bash
 
 php artisan task:make_list AutoList
 //在app/Lists下面生成了自动列表代码
@@ -27,7 +28,11 @@ php artisan task:make_list AutoList
  *      1.在controller层$service->list($itemCode),
  *      2.在service层use当前类
 
-//验证器用法
+```
+
+## 使用说明
+controller层需要引入MakeValidateRequest
+```php  
 <?php
 namespace App\Http\Controllers\Clinical;
 use Lsg\AutoScreen\Support\MakeValidateRequest;
@@ -47,8 +52,9 @@ class PatientController extends BaseController
 
         return success($res);
     }
-
+```
 config/makeValidate.php增加需要验证的类
+```
 <?php
 use App\Http\Controllers\TestController;
 
@@ -64,6 +70,7 @@ return [
         '身份证号',
     ],
 ];
+```
 //更新自动验证缓存
 php artisan task:make_validate
 
