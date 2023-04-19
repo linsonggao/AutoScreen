@@ -7,6 +7,10 @@ use Lsg\AutoScreen\Gupo\BaseList;
 
 /**
  * 自定义列表
+ * 使用方法:
+ *      0.声明一个列表路由(比如/api/patient/list)
+ *      1.在controller层$service->list($itemCode),
+ *      2.在service层use当前类
  */
 trait DummyClass
 {
