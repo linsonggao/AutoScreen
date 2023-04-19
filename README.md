@@ -30,7 +30,7 @@ php artisan task:make_list AutoList
 
 ```
 
-## 使用说明
+## 验证器使用说明
 controller层需要引入MakeValidateRequest
 ```php  
 <?php
@@ -54,7 +54,7 @@ class PatientController extends BaseController
     }
 ```
 config/makeValidate.php增加需要验证的类
-```
+```php  
 <?php
 use App\Http\Controllers\TestController;
 
