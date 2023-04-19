@@ -15,7 +15,10 @@ trait BaseList
      */
     public function list($method)
     {
-        $model = new self::$bussinessModel;
+        $model = null;
+        if (isset(self::$bussinessModel)) {
+            $model = new self::$bussinessModel;
+        }
         $businessTotal = 0;
         /**
          * 缓存
@@ -23,7 +26,7 @@ trait BaseList
         $cacheKey = 'list' . json_encode(request()->all());
         $cardScreenArr = []; //身份证数组
 
-        $noCsItems = self::$loseBaseColumnCsItems;
+        $noCsItems = self::$loseBaseColumnCsItems ?? [];
         // $businessArrs = array_intersect(array_keys(request()->all()), self::$bussinessColumn); //是否存在业务字段需要查询
         if (Cache::has($cacheKey) && env('APP_ENV') !== 'local') {
             $listJson = Cache::get($cacheKey);
@@ -55,7 +58,7 @@ trait BaseList
             //数据部表无业务字段
             //搜索业务字段的情况下，过滤业务字段的人群
             //需要和关联表数据筛选条件一致要不然查询不准,此处要注意字段同步
-            if (!in_array($method, $noCsItems)) {
+            if (!in_array($method, $noCsItems) && $model) {
                 foreach (self::$bussinessColumn as $value) {
                     if (isset($requestAll[$value])) {
                         $patientsAll = $model->makeList(screen: [self::$itemDoEqual[$method] => 1], requestData: $requestAll);
@@ -80,7 +83,7 @@ trait BaseList
         }
         //新增业务数据字段
         //未搜索业务字段的情况下，增加业务字段
-        if (!$cardScreenArr) {
+        if (!$cardScreenArr && $model) {
             $listArr = json_decode(json_encode($list['list']), true);
             $inCrdArr = array_column($listArr, 'id_crd_no');
             $baseBussinessSelect = array_values(array_intersect($this->{$method}, self::$bussinessColumn));
@@ -88,7 +91,7 @@ trait BaseList
             $cardScreenArr = array_column($arrData, null, 'card_no');
         }
         //取交集
-        if (!in_array($method, $noCsItems)) {
+        if (!in_array($method, $noCsItems) && $model) {
             foreach ($list['list'] as $key => $value) {
                 foreach (self::$bussinessColumn as $k => $column) {
                     if (in_array($column, $this->{$method})) {

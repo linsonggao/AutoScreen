@@ -1,0 +1,50 @@
+<?php
+
+namespace DummyNamespace;
+
+use App\Models\Patient;
+use Lsg\AutoScreen\Gupo\BaseList;
+
+/**
+ * 自定义列表
+ */
+trait DummyClass
+{
+    use BaseList;
+    //基础查询
+    protected static $baseWhere = ['center_id' => 3];
+
+    //基础查询字段
+    protected static $baseSelect = ['id', 'name', 'gender', 'age', 'phone', 'card_no', 'address', 'village_name', 'village_code', 'town_name', 'town_code'];
+
+    //年龄范围人群
+    public $is_age_flg = [];
+
+    //死亡人群
+    public $is_die_flg = []; //疾病诊断 默认乳腺癌
+
+    /**
+     * 自动化列表
+     * @param mixed $method
+     * @param mixed $requestData
+     */
+    public function __list($method, $requestData)
+    {
+        $list =
+            match ($method) {
+                //搜索指定年龄范围人群
+                'is_age_flg'              => Patient::makeList(
+                    screen: self::addWhere(['center_id' => 3]),
+                    select: $this->addSelect(),
+                    orderBy: [['updated_at', 'desc']],
+                    requestData: $requestData
+                ),
+                default                   => [
+                    'list'  => [],
+                    'total' => 0,
+                ]
+            };
+
+        return $list;
+    }
+}
