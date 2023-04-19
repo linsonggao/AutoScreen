@@ -4,6 +4,7 @@ namespace Lsg\AutoScreen;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\ServiceProvider;
+use Lsg\AutoScreen\Console\MakeListCommand;
 use Lsg\AutoScreen\Console\MakeValidateCommand;
 use Lsg\AutoScreen\Support\CustomPaginator;
 
