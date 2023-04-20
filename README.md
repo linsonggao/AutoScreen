@@ -57,22 +57,93 @@ config/makeValidate.php增加需要验证的类
 ```php  
 <?php
 use App\Http\Controllers\TestController;
-
+use App\Http\Controllers\Clinical\PatientController;
 return [
     'name'    => [
-        [TestController::class . '@index'],
+        [TestController::class . '@index',PatientController::class . '@createPatients'],
         ['bail', 'required', 'string'],
         '用户姓名',
     ],
     'card_no' => [
-        [TestController::class . '@index'],
+        [TestController::class . '@index',PatientController::class . '@createPatients'],
         ['bail', 'required', new Lsg\AutoScreen\Rules\IdCardRule],
         '身份证号',
     ],
 ];
 ```
+```
 //更新自动验证缓存
 php artisan task:make_validate
+```
+## 缓存中间件使用说明
+App/Http/Kernel注册中间件
+'validate.make'        => \Lsg\AutoScreen\Middleware\ValidateMake::class,
+```php
+<?php
+
+namespace App\Http;
+
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
+
+class Kernel extends HttpKernel
+{
+    /**
+     * The application's global HTTP middleware stack.
+     *
+     * These middleware are run during every request to your application.
+     *
+     * @var array<int, class-string|string>
+     */
+    protected $middleware = [
+        // \App\Http\Middleware\TrustHosts::class,
+        // \App\Http\Middleware\TrustProxies::class,
+        // \Fruitcake\Cors\HandleCors::class,
+        \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+    ];
+
+    /**
+     * The application's route middleware groups.
+     *
+     * @var array<string, array<int, class-string|string>>
+     */
+    protected $middlewareGroups = [
+        'api' => [
+            // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            // 'throttle:api',
+            // \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+    ];
+
+    /**
+     * The application's route middleware.
+     *
+     * These middleware may be assigned to groups or used individually.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected $routeMiddleware = [
+        'auth'                 => \App\Http\Middleware\Authenticate::class,
+        //缓存中间件
+        'cache.make'           => \App\Http\Middleware\CacheMake::class,
+        //入参验证器
+        'validate.make'        => \Lsg\AutoScreen\Middleware\ValidateMake::class,
+    ];
+}
+```
+路由引入中间件
+参数1是缓存时间
+参数2是缓存key(在使用redis缓存的情况下仅仅对当前路由与入参作为缓存的key可能会导致redis缓存key重复)
+```php  
+<?php
+Route::group([
+            'middleware' => ['cache.make:1,cancers'],
+        ], function () {
+            // 顶部六要素统计
+            Route::get('top_six_element', [WorkbenchController::class, 'topSixElement']);
+        });
 
 ```
 ## 发行说明
