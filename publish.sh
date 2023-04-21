@@ -3,7 +3,7 @@
 if [[ -n $1 ]];then
     devKey=$1
 else
-    devKey="test-k8s-8888-yuhuan-v"
+    devKey=""
 fi
 version=$(git describe --tags --match $devKey* |awk '{split($1,arr,"-v"); print arr[2]}')
 
