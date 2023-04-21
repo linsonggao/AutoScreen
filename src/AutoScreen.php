@@ -124,58 +124,56 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
             $multi_str = 'automake.' . $this->table . '_in_multi';
             $multi_arr = config($multi_str) ?? config('automake.all_in_multi') ?? [];
             if (in_array($searchKey, $multi_arr)) {
-                $q->where(function ($q) use ($searchKey, $searchValue) {
-                    if (is_array($searchValue)) {
-                        foreach ($searchValue as $value) {
-                            if (mb_strpos($value, ',') !== false) {
-                                $value = explode(',', $value);
-                                if (count($value) > 1) {
-                                    $q->orWhere(function ($query) use ($value, $searchKey) {
-                                        $query->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
-                                    });
-                                } else {
-                                    $q->orWhere(function ($query) use ($value, $searchKey) {
-                                        $query->where($searchKey, '>=', $value[0]);
-                                    });
+                //判断json数组,多条件age[] = [18,20]
+                if (is_array($searchValue) && is_array(json_decode($searchValue[0]))) {
+                    if (in_array($searchKey, $multi_arr)) {
+                        $q->where(
+                            function ($query) use ($searchKey, $searchValue) {
+                                foreach ($searchValue as $value) {
+                                    //逗号隔开 $age[0][0] = 1,10
+                                    $strArr = json_decode($value);
+                                    if (count($strArr) == 2) {
+                                        $value = $strArr;
+                                        //$age[][] = 1,10
+                                        //字符串值between
+                                        $query->orWhere(function ($q2) use ($searchKey, $value) {
+                                            $q2->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
+                                        });
+                                    } else {
+                                        //$age[][] = 1
+                                        $value = $strArr;
+                                        //单个值大于
+                                        $query->orWhere(function ($q2) use ($searchKey, $value) {
+                                            $q2->where($searchKey, '>=', $value[0]);
+                                        });
+                                        continue;
+                                    }
                                 }
                             }
-                        }
+                        );
                     }
-                });
-                continue;
-            }
-            //判断json数组,多条件age[] = [18,20]
-            if (is_array($searchValue) && is_array(json_decode($searchValue[0]))) {
-                $multi_str = 'automake.' . $this->table . '_in_multi';
-                $multi_arr = config($multi_str) ?? config('automake.all_in_multi') ?? [];
-
-                if (in_array($searchKey, $multi_arr)) {
-                    $q->where(
-                        function ($query) use ($searchKey, $searchValue) {
+                    continue;
+                } else {
+                    $q->where(function ($q) use ($searchKey, $searchValue) {
+                        if (is_array($searchValue)) {
                             foreach ($searchValue as $value) {
-                                //逗号隔开 $age[0][0] = 1,10
-                                $strArr = json_decode($value);
-                                if (count($strArr) == 2) {
-                                    $value = $strArr;
-                                    //$age[][] = 1,10
-                                    //字符串值between
-                                    $query->orWhere(function ($q2) use ($searchKey, $value) {
-                                        $q2->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
-                                    });
-                                } else {
-                                    //$age[][] = 1
-                                    $value = $strArr;
-                                    //单个值大于
-                                    $query->orWhere(function ($q2) use ($searchKey, $value) {
-                                        $q2->where($searchKey, '>=', $value[0]);
-                                    });
-                                    continue;
+                                if (mb_strpos($value, ',') !== false) {
+                                    $value = explode(',', $value);
+                                    if (count($value) > 1) {
+                                        $q->orWhere(function ($query) use ($value, $searchKey) {
+                                            $query->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
+                                        });
+                                    } else {
+                                        $q->orWhere(function ($query) use ($value, $searchKey) {
+                                            $query->where($searchKey, '>=', $value[0]);
+                                        });
+                                    }
                                 }
                             }
                         }
-                    );
+                    });
+                    continue;
                 }
-                continue;
             }
             //多条件模糊匹配,name or mobile
             if ($configSearchKeys && in_array($searchKey, $configSearchKeys)) {
@@ -250,6 +248,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                     $gt_arr = config($gt_str) ?? '';
                     $lt_str = 'automake.' . $this->table . '_lt_arr';
                     $lt_arr = config($lt_str) ?? '';
+
                     if ($between_arr && count($searchValue) >= 2 && in_array($searchKey, $between_arr)) { //age[]大于2个值的时候
                         $q->where($searchKey, '>=', $searchValue[0])->where($searchKey, '<=', $searchValue[1]);
                     } elseif ($between_arr && count($searchValue) == 1 && mb_strpos($searchValue[0], ',') && in_array($searchKey, $between_arr)) { //age[] = 1,100的时候
