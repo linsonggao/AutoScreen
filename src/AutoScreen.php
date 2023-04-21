@@ -102,13 +102,13 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                                         //$age[][] = 1,10
                                         //字符串值between
                                         $query->orWhere(function ($q2) use ($searchKey, $value) {
-                                            $q2->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
+                                            $q2->where($searchKey, '>=', (int) $value[0])->where($searchKey, '<=', (int) $value[1]);
                                         });
                                     } else {
                                         //$age[][] = 1
                                         //单个值大于
                                         $query->orWhere(function ($q2) use ($searchKey, $value) {
-                                            $q2->where($searchKey, '>=', $value[0]);
+                                            $q2->where($searchKey, '>=', (int) $value[0]);
                                         });
                                         continue;
                                     }
@@ -137,14 +137,14 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                                         //$age[][] = 1,10
                                         //字符串值between
                                         $query->orWhere(function ($q2) use ($searchKey, $value) {
-                                            $q2->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
+                                            $q2->where($searchKey, '>=', (int) $value[0])->where($searchKey, '<=', (int) $value[1]);
                                         });
                                     } else {
                                         //$age[][] = 1
                                         $value = $strArr;
                                         //单个值大于
                                         $query->orWhere(function ($q2) use ($searchKey, $value) {
-                                            $q2->where($searchKey, '>=', $value[0]);
+                                            $q2->where($searchKey, '>=', (int) $value[0]);
                                         });
                                         continue;
                                     }
@@ -161,11 +161,11 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                                     $value = explode(',', $value);
                                     if (count($value) > 1) {
                                         $q->orWhere(function ($query) use ($value, $searchKey) {
-                                            $query->where($searchKey, '>=', $value[0])->where($searchKey, '<=', $value[1]);
+                                            $query->where($searchKey, '>=', (int) $value[0])->where($searchKey, '<=', (int) $value[1]);
                                         });
                                     } else {
                                         $q->orWhere(function ($query) use ($value, $searchKey) {
-                                            $query->where($searchKey, '>=', $value[0]);
+                                            $query->where($searchKey, '>=', (int) $value[0]);
                                         });
                                     }
                                 }
@@ -250,16 +250,16 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                     $lt_arr = config($lt_str) ?? '';
 
                     if ($between_arr && count($searchValue) >= 2 && in_array($searchKey, $between_arr)) { //age[]大于2个值的时候
-                        $q->where($searchKey, '>=', $searchValue[0])->where($searchKey, '<=', $searchValue[1]);
+                        $q->where($searchKey, '>=', (int) $searchValue[0])->where($searchKey, '<=', (int) $searchValue[1]);
                     } elseif ($between_arr && count($searchValue) == 1 && mb_strpos($searchValue[0], ',') && in_array($searchKey, $between_arr)) { //age[] = 1,100的时候
                         $ageArr = explode(',', $searchValue[0]);
                         if (count($ageArr) == 2) {
-                            $q->where($searchKey, '>=', $ageArr[0])->where($searchKey, '<=', $ageArr[1]);
+                            $q->where($searchKey, '>=', (int) $ageArr[0])->where($searchKey, '<=', (int) $ageArr[1]);
                         }
                     } elseif ($gt_arr && in_array($searchKey, $gt_arr)) { //age[]=18，大于18
-                        $q->where($searchKey, '>=', $searchValue);
+                        $q->where($searchKey, '>=', (int) $searchValue);
                     } elseif ($lt_arr && in_array($searchKey, $lt_arr)) {
-                        $q->where($searchKey, '<=', $searchValue);
+                        $q->where($searchKey, '<=', (int) $searchValue);
                     } else { //默认wherein
                         $q->whereIn($searchKey, $searchValue);
                     }
@@ -279,7 +279,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                 }
                 //时间筛选,时间格式并且是数组
                 if (is_array($searchValue) && ($type == 'datetime' || $type == 'date')) {
-                    $q->where($searchKey, '>=', $searchValue[0] . ' 00:00:00')->where($searchKey, '<=', $searchValue[1] . ' 23:59:59');
+                    $q->where($searchKey, '>=',$searchValue[0] . ' 00:00:00')->where($searchKey, '<=',$searchValue[1] . ' 23:59:59');
                 } elseif (($type == 'string' || $type == 'text') && !in_array($searchKey, config('automake.string_equal') ?? []) &&
                     !in_array($searchKey, $between_arr)
                 ) { //如果是字符串并且默认为like
@@ -291,7 +291,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                     if (is_array($between_arr) && in_array($searchKey, $between_arr)) {
                         $arr = explode(',', $searchValue);
                         if ($arr) {
-                            $q->where($searchKey, '>=', $arr[0])->where($searchKey, '<=', $arr[1]);
+                            $q->where($searchKey, '>=', (int) $arr[0])->where($searchKey, '<=', (int) $arr[1]);
                         }
                     }
                 }
@@ -346,7 +346,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                                     foreach ($value[$searchKey] as $multi_value) {
                                         if (count($multi_value) == 2) {
                                             $q2->orWhere(function ($q3) use ($multi_value, $searchKey) {
-                                                $q3->where($searchKey, '>=', $multi_value[0])->where($searchKey, '<=', $multi_value[1]);
+                                                $q3->where($searchKey, '>=', (int) $multi_value[0])->where($searchKey, '<=', (int) $multi_value[1]);
                                             });
                                         } elseif (count($multi_value) == 1) {
                                             $q2->orWhere($searchKey, $multi_value[0]);
@@ -354,7 +354,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                                     }
                                 });
                             } else {
-                                $q->where($searchKey, '>=', $value[$searchKey][0])->where($searchKey, '<=', $value[$searchKey][1]);
+                                $q->where($searchKey, '>=', (int) $value[$searchKey][0])->where($searchKey, '<=', (int) $value[$searchKey][1]);
                             }
                         }
                     //where[] = ['age','in',[1,2]]
@@ -435,7 +435,7 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                     if (count($value) != count($value, 1)) {
                         //where[] = ['age'=>[40,70]]
                         $searchKey = array_key_first($value);
-                        $q->where($searchKey, '>=', $value[$searchKey][0])->where($searchKey, '<=', $value[$searchKey][1]);
+                        $q->where($searchKey, '>=', (int) $value[$searchKey][0])->where($searchKey, '<=', (int) $value[$searchKey][1]);
                     } else {
                         //where[] = ['resulut','like','阳']
                         if ($value[1] == 'like') {
