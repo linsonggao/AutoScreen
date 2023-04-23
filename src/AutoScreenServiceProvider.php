@@ -3,6 +3,8 @@
 namespace Lsg\AutoScreen;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Lsg\AutoScreen\Console\MakeListCommand;
 use Lsg\AutoScreen\Console\MakeValidateCommand;
@@ -17,8 +19,8 @@ class AutoScreenServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->dbDebug();
         // 单例绑定服务---可以门面调用
-
         $this->app->singleton('auto-screen', function () {
             return new AutoScreen;
         });
@@ -115,6 +117,30 @@ class AutoScreenServiceProvider extends ServiceProvider
             __DIR__ . '/../config/automake.php'     => config_path('automake.php'), // 发布配置文件到 laravel 的config 下
             __DIR__ . '/../config/makeValidate.php' => config_path('makeValidate.php'), // 发布配置文件到 laravel 的config 下
         ]);
+    }
+
+    private function dbDebug()
+    {
+        // 记录DB日志
+        if (env('LSG_DEBUG', false)) {
+            DB::listen(function ($query) {
+                $location = collect(debug_backtrace())->filter(function ($trace) {
+                    return !str_contains($trace['file'], 'vendor/');
+                })->first(); // grab the first element of non vendor/ calls
+
+                $bindings = implode(', ', $query->bindings); // format the bindings as string
+                $sec_time = $query->time = $query->time / 1000;
+                Log::channel('sql')->info("
+                    ------------
+                    Sql: {$query->sql}
+                    Bindings: {$bindings}
+                    Time: {$sec_time}秒
+                    File: {$location['file']}
+                    Line: {$location['line']}
+                    ------------
+                ");
+            });
+        }
     }
 
     /**
