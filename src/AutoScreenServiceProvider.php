@@ -125,14 +125,16 @@ class AutoScreenServiceProvider extends ServiceProvider
         if (config('automake.sql_log_debug', false)) {
             DB::listen(function ($query) {
                 $location = collect(debug_backtrace())->filter(function ($trace) {
-                    return !str_contains($trace['file'], 'vendor/');
+                    return !str_contains($trace['file'] ?? '', 'vendor/');
                 })->first(); // grab the first element of non vendor/ calls
-
                 //$bindings = implode(', ', $query->bindings); // format the bindings as string
                 $record = str_replace('?', '"' . '%s' . '"', $query->sql);
                 $record = vsprintf($record, $query->bindings);
                 $record = str_replace('\\', '', $record);
                 $sec_time = $query->time = $query->time / 1000;
+                Log::channel('sql')->info('------------------------------------------------');
+                Log::channel('sql')->info('URL: ' . request()->url());
+                Log::channel('sql')->info('------------------------------------------------');
                 Log::channel('sql')->info("
                     ------------
                     Sql: {$record}
