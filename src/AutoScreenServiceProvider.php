@@ -122,18 +122,20 @@ class AutoScreenServiceProvider extends ServiceProvider
     private function dbDebug()
     {
         // 记录DB日志
-        if (env('LSG_DEBUG', false)) {
+        if (config('automake.sql_log_debug', false)) {
             DB::listen(function ($query) {
                 $location = collect(debug_backtrace())->filter(function ($trace) {
                     return !str_contains($trace['file'], 'vendor/');
                 })->first(); // grab the first element of non vendor/ calls
 
-                $bindings = implode(', ', $query->bindings); // format the bindings as string
+                //$bindings = implode(', ', $query->bindings); // format the bindings as string
+                $record = str_replace('?', '"' . '%s' . '"', $query->sql);
+                $record = vsprintf($record, $query->bindings);
+                $record = str_replace('\\', '', $record);
                 $sec_time = $query->time = $query->time / 1000;
                 Log::channel('sql')->info("
                     ------------
-                    Sql: {$query->sql}
-                    Bindings: {$bindings}
+                    Sql: {$record}
                     Time: {$sec_time}秒
                     File: {$location['file']}
                     Line: {$location['line']}

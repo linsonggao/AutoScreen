@@ -1,5 +1,7 @@
 <?php
 return [
+    'sql_log_debug'                                       => env('SQL_LOG_DEBU', false), //sql日志
+    'cache_time'                                          => 6, //数据字段缓存-反正重复筛查
     //默认不筛选的上传值
     'default'                                             => -1,
     //默认不做模糊匹配的字符串(varchar)字段
