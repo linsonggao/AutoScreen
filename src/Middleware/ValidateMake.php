@@ -32,7 +32,7 @@ class ValidateMake
         return $response;
     }
 
-    //更新路由验证的缓存
+     //更新路由验证的缓存
     public function makeValidateCache($nowActionKey)
     {
         $ruleConfigs = config('makeValidate');
@@ -42,7 +42,10 @@ class ValidateMake
             if (in_array($nowActionKey, $rule[0])) {
                 $ruleConfig[$param] = $rule[1] ?? [];
                 $attrConfig[$param] = $rule[2] ?? [];
-                $messageConfig[$param] = $rule[3] ?? [];
+                $messageConfig = [];
+                if ($rule[3] ?? '') {
+                    $messageConfig[array_key_first($rule[3])] = current($rule[3]);
+                }
             }
         }
         Cache::set($nowActionKey . 'rule', $ruleConfig);
