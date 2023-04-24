@@ -1,23 +1,41 @@
 <?php
-use App\Http\Controllers\TestController;
+
+use App\Http\Controllers\Api\ApplyController;
+use Lsg\AutoScreen\Rules\IdCardRule;
+use Lsg\AutoScreen\Rules\PhoneRule;
 
 return [
-    'name'    => [
-        [TestController::class . '@index'],
-        ['bail', 'required', 'string'],
-        '用户姓名',
-        '姓名字段必须',
-    ],
-    'phone'   => [
-        [TestController::class . '@index'],
-        ['bail', 'required', new Lsg\AutoScreen\Rules\PhoneRule],
-        '手机号',
-        '手机号必须',
-    ],
-    'card_no' => [
-        [TestController::class . '@index'],
-        ['bail', 'required', new Lsg\AutoScreen\Rules\IdCardRule],
+    'account_id' => [
+        [
+            ApplyController::class . '@getOrgDoc',
+        ],
+        ['sometimes', 'required', new IdCardRule],
         '身份证号',
-        '身份证号必须',
+        ['account_id.required' => '身份证号缺失'],
+    ],
+    'card_no'    => [
+        [
+            ApplyController::class . '@postApply',
+            ApplyController::class . '@postRelationApply',
+        ],
+        ['bail', 'required', new IdCardRule],
+        '身份证号',
+        ['card_no.required' => '身份证号缺失'],
+    ],
+    'tel'        => [
+        [
+            ApplyController::class . '@postApply',
+        ],
+        ['bail', 'nullable', new PhoneRule],
+        '手机号',
+        ['tel.required' => '手机号缺失'],
+    ],
+    'fml_org_cd' => [
+        [
+            ApplyController::class . '@postApply',
+        ],
+        ['bail', 'required', 'string'],
+        '家医所属机构编码',
+        ['fml_org_cd.required' => '家医所属机构编码缺少'],
     ],
 ];
