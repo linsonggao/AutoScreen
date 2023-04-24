@@ -75,6 +75,8 @@ class MakeValidateRequest extends FormRequest
                 $messageConfig = [];
                 if ($rule[3] ?? '') {
                     $messageConfig[array_key_first($rule[3])] = current($rule[3]);
+                } else {
+                    $messageConfig[$param . '.' . $rule[1][1]] = $rule[2] . '缺失';
                 }
             }
         }
