@@ -19,7 +19,7 @@ class MakeValidateRequest extends FormRequest
         if ($ruleConfig = Cache::get($nowActionKey . 'rule')) {
             return $ruleConfig;
         }
-        list($ruleConfig, $attrConfig) = $this->makeValidateCache($nowActionKey);
+        list($ruleConfig, $attrConfig, $messageConfig) = $this->makeValidateCache($nowActionKey);
 
         $ruleConfig = Cache::get($nowActionKey . 'rule') ?? [];
 
@@ -38,10 +38,28 @@ class MakeValidateRequest extends FormRequest
         if ($attrConfig = Cache::get($nowActionKey . 'attr')) {
             return $attrConfig;
         }
-        list($ruleConfig, $attrConfig) = $this->makeValidateCache($nowActionKey);
+        list($ruleConfig, $attrConfig, $messageConfig) = $this->makeValidateCache($nowActionKey);
         $attrConfig = Cache::get($nowActionKey . 'attr') ?? [];
 
         return $attrConfig;
+    }
+
+    /**
+     * 获取已定义验证规则的错误消息。
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        $nowActionKey = Route::currentRouteAction();
+        $messageConfig = Cache::get($nowActionKey . 'messages') ?? [];
+        if ($messageConfig = Cache::get($nowActionKey . 'messages')) {
+            return $messageConfig;
+        }
+        list($ruleConfig, $attrConfig, $messageConfig) = $this->makeValidateCache($nowActionKey);
+        $messageConfig = Cache::get($nowActionKey . 'messages') ?? [];
+
+        return $messageConfig;
     }
 
     //更新路由验证的缓存
@@ -52,13 +70,15 @@ class MakeValidateRequest extends FormRequest
         $attrConfig = [];
         foreach ($ruleConfigs as $param => $rule) {
             if (in_array($nowActionKey, $rule[0])) {
-                $ruleConfig[$param] = $rule[1];
-                $attrConfig[$param] = $rule[2];
+                $ruleConfig[$param] = $rule[1] ?? [];
+                $attrConfig[$param] = $rule[2] ?? [];
+                $messageConfig[$rule[3][0] ?? []] = $rule[3][1] ?? [];
             }
         }
         Cache::set($nowActionKey . 'rule', $ruleConfig);
         Cache::set($nowActionKey . 'attr', $attrConfig);
+        Cache::set($nowActionKey . 'messages', $messageConfig);
 
-        return [$ruleConfig, $attrConfig];
+        return [$ruleConfig, $attrConfig, $messageConfig];
     }
 }

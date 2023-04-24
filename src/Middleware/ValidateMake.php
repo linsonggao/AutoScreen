@@ -26,13 +26,13 @@ class ValidateMake
 
             return $response;
         }
-        list($ruleConfig, $attrConfig) = $this->makeValidateCache($nowActionKey);
+        list($ruleConfig, $attrConfig, $messageConfig) = $this->makeValidateCache($nowActionKey);
         $response = $next($request);
 
         return $response;
     }
 
-    //更新路由的缓存
+    //更新路由验证的缓存
     public function makeValidateCache($nowActionKey)
     {
         $ruleConfigs = config('makeValidate');
@@ -40,13 +40,15 @@ class ValidateMake
         $attrConfig = [];
         foreach ($ruleConfigs as $param => $rule) {
             if (in_array($nowActionKey, $rule[0])) {
-                $ruleConfig[$param] = $rule[1];
-                $attrConfig[$param] = $rule[2];
+                $ruleConfig[$param] = $rule[1] ?? [];
+                $attrConfig[$param] = $rule[2] ?? [];
+                $messageConfig[$param] = $rule[3] ?? [];
             }
         }
         Cache::set($nowActionKey . 'rule', $ruleConfig);
         Cache::set($nowActionKey . 'attr', $attrConfig);
+        Cache::set($nowActionKey . 'messages', $messageConfig);
 
-        return [$ruleConfig, $attrConfig];
+        return [$ruleConfig, $attrConfig, $messageConfig];
     }
 }
