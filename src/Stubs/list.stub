@@ -15,9 +15,11 @@ use Lsg\AutoScreen\Gupo\BaseList;
 trait DummyClass
 {
     use BaseList;
-    //基础查询
-    protected static $baseWhere = ['center_id' => 3];
+    //缓存时间
+    protected static $cacheExpire = 6;
 
+    //基础查询
+    protected static $baseWhere = ['center_id' => 1];
     //基础查询字段
     protected static $baseSelect = ['id', 'name', 'gender', 'age', 'phone', 'card_no', 'address', 'village_name', 'village_code', 'town_name', 'town_code'];
 
@@ -38,7 +40,7 @@ trait DummyClass
             match ($method) {
                 //搜索指定年龄范围人群
                 'is_age_flg'              => Patient::makeList(
-                    screen: self::addWhere(['center_id' => 3]),
+                    screen: self::addWhere([]),
                     select: $this->addSelect(),
                     orderBy: [['updated_at', 'desc']],
                     requestData: $requestData
