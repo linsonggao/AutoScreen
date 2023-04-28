@@ -2,12 +2,20 @@
 
 namespace Lsg\AutoScreen\Support;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 class MakeValidateRequest extends FormRequest
 {
+    protected $stopOnFirstFailure = true;
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new ApiException($validator->errors()->first());
+    }
+
     /**
      * rules
      *
