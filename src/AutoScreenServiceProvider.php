@@ -128,16 +128,19 @@ class AutoScreenServiceProvider extends ServiceProvider
                     return !str_contains($trace['file'] ?? '', 'vendor/');
                 })->first(); // grab the first element of non vendor/ calls
                 //$bindings = implode(', ', $query->bindings); // format the bindings as string
-                $record = str_replace('?', '"' . '%s' . '"', $query->sql);
-                $record = vsprintf($record, $query->bindings);
-                $record = str_replace('\\', '', $record);
-                $sec_time = $query->time = $query->time / 1000;
-                $location['file'] = $location['file'] ?? '';
-                $location['line'] = $location['line'] ?? '';
-                Log::channel('sql')->info('------------------------------------------------');
-                Log::channel('sql')->info('URL: ' . request()->url());
-                Log::channel('sql')->info('------------------------------------------------');
-                Log::channel('sql')->info("
+
+                try {
+                    //code...
+                    $record = str_replace('?', '"' . '%s' . '"', $query->sql);
+                    $record = vsprintf($record, $query->bindings);
+                    $record = str_replace('\\', '', $record);
+                    $sec_time = $query->time = $query->time / 1000;
+                    $location['file'] = $location['file'] ?? '';
+                    $location['line'] = $location['line'] ?? '';
+                    Log::channel('sql')->info('------------------------------------------------');
+                    Log::channel('sql')->info('URL: ' . request()->url());
+                    Log::channel('sql')->info('------------------------------------------------');
+                    Log::channel('sql')->info("
                     ------------
                     Sql: {$record}
                     Time: {$sec_time}秒
@@ -145,6 +148,10 @@ class AutoScreenServiceProvider extends ServiceProvider
                     Line: {$location['line']}
                     ------------
                 ");
+                } catch (\Throwable $th) {
+                    //throw $th;
+                    Log::channel('sql')->info('---捕获异常sql---', [$query->sql]);
+                }
             });
         }
     }
