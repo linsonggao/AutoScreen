@@ -20,6 +20,11 @@ abstract class AutoScreenAbstract implements AutoScreenInterface
 
     protected $loseWhere;
 
+    /**
+     * 返回model实例
+     * @param mixed $query
+     * @return object
+     */
     public function getQuery($query): object
     {
         $this->query = $query;
