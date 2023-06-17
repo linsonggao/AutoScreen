@@ -11,13 +11,13 @@ use Lsg\AutoScreen\Support\ApiException;
 
 class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
 {
+    private string $sql = '';
+
     /**
-     * 返回处理过的model实例
      * 调用方法
      * $query = new Admin();
      * $res = AutoMake::getQuery($query)->makeAutoQuery();
      * $res->get()->toArray();
-     * @return object
      */
     public function makeAutoQuery(): object
     {
@@ -299,6 +299,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                 }
             }
         }
+        if (env('APP_DEBUG')) {
+            $this->sql = $q->toSql();
+        }
         //$q->where('test', 'test');
         return $q;
     }
@@ -313,7 +316,6 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
      * @param mixed $orderBy
      * @param mixed $func
      * @param mixed $requestData
-     * @return array
      */
     public function makeAutoPageList($screen = [], $select = ['*'], $loseWhere = [], $pageCustom = false, $return = 'data', $orderBy = 'id', $func = false, $requestData = []): array
     {
@@ -409,22 +411,13 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
         unset($list['data']);
         unset($list['list']);
         $list[$return] = $forList;
+        if($this->sql)
+         $list['sql'] = $this->sql;
+        
 
         return $list;
     }
 
-    /**
-     * 填写过滤条件
-     * @param array $screen 传过滤字段
-     * @param mixed $select 传只筛查字段
-     * @param array $loseWhere 传不筛查的字段数组
-     * @param bool $pageCustom 分页的问题
-     * @param mixed $return
-     * @param mixed $orderBy
-     * @param mixed $func
-     * @param mixed $requestData
-     * @return array
-     */
     public function makeCustomPageList($screen = [], $select = ['*'], $loseWhere = [], $pageCustom = true, $return = 'data', $orderBy = 'id', $func = false, $requestData = []): array
     {
         return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy, $func, $requestData);
@@ -435,7 +428,6 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
      * @param mixed $screen
      * @param mixed $func
      * @param mixed $requestData
-     * @return int
      */
     public function makeCount($screen = [], $func = false, $requestData = [])
     {
@@ -469,18 +461,6 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
         return $q->count();
     }
 
-    /**
-     * 填写过滤条件
-     * @param array $screen 传过滤字段
-     * @param mixed $select 传只筛查字段
-     * @param array $loseWhere 传不筛查的字段数组
-     * @param bool $pageCustom 分页的问题
-     * @param mixed $return
-     * @param mixed $orderBy
-     * @param mixed $func
-     * @param mixed $requestData
-     * @return array
-     */
     public function makeList($screen = [], $select = ['*'], $loseWhere = [], $pageCustom = true, $return = 'list', $orderBy = 'id', $func = false, $requestData = []): array
     {
         return $this->makeAutoPageList($screen, $select, $loseWhere, $pageCustom, $return, $orderBy, $func, $requestData);
@@ -544,7 +524,6 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
     /**
      * 自动创建，传什么字段新增什么字段
      * @param mixed $createMore
-     * @return object
      */
     public function doAutoCreate($createMore = [])
     {
