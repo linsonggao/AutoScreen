@@ -386,6 +386,10 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
         $searchArr = $this->requestData ?: request()->all();
         $page = $searchArr['page'] ?? 1;
         $per_page = $searchArr['per_page'] ?? 15;
+        if (env('APP_DEBUG')) {
+            $this->sql = $q->toSql();
+        }
+
         if ($pageCustom) {
             //perPage: $perPage, page: $page
             $list = $q->customPage($per_page, ['*'], 'page', $page)->toArray();
@@ -411,9 +415,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
         unset($list['data']);
         unset($list['list']);
         $list[$return] = $forList;
-        if($this->sql)
-         $list['sql'] = $this->sql;
-        
+        if ($this->sql) {
+            $list['sql'] = $this->sql;
+        }
 
         return $list;
     }
