@@ -299,9 +299,6 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
                 }
             }
         }
-        if (env('APP_DEBUG')) {
-            $this->sql = $q->toSql();
-        }
         //$q->where('test', 'test');
         return $q;
     }
@@ -388,6 +385,9 @@ class AutoScreen extends AutoScreenAbstract implements AutoScreenInterface
         $per_page = $searchArr['per_page'] ?? 15;
         if (env('APP_DEBUG')) {
             $this->sql = $q->toSql();
+            $record = str_replace('?', '"' . '%s' . '"', $this->sql);
+            $record = vsprintf($record, $q->getBindings());
+            $this->sql = str_replace('\\', '', $record);
         }
 
         if ($pageCustom) {
