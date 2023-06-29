@@ -17,13 +17,19 @@ trait ExtendEnum
         return '';
     }
 
-    public static function keyValues(): array
+    /**
+     * @param null|int|string $key
+     */
+    public static function keyValues($key = null): array|string
     {
         $result = [];
         foreach (self::cases() as $item) {
             $result[$item->value] = $item->getDescription();
         }
-
-        return $result;
+        if (null !== $key) {
+            return $result[$key];
+        } else {
+            return $result;
+        }
     }
 }
