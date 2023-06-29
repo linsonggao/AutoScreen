@@ -27,7 +27,7 @@ trait ExtendEnum
             $result[$item->value] = $item->getDescription();
         }
         if (null !== $key) {
-            return $result[$key];
+            return $result[$key] ?? '';
         } else {
             return $result;
         }
